@@ -50,6 +50,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.4"
+  dart_lint:
+    dependency: "direct dev"
+    description:
+      path: "."
+      ref: "v2.0.1"
+      resolved-ref: "4039a9113eaa0b3701997559964b9d72336feb4f"
+      url: "git@github.com:aaazlkm/dart_lint.git"
+    source: git
+    version: "0.0.1"
   fake_async:
     dependency: transitive
     description:

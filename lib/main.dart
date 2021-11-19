@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'lesson3/lesson3.dart';
+import 'lesson4/lesson4.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,13 +15,18 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: const Lesson3Page(),
+        home: const Lesson4Page(),
       );
 }
 
-class EmptyPage extends StatelessWidget {
-  const EmptyPage({Key? key}) : super(key: key);
+class TemplatePage extends StatefulWidget {
+  const TemplatePage({Key? key}) : super(key: key);
 
+  @override
+  _TemplatePageState createState() => _TemplatePageState();
+}
+
+class _TemplatePageState extends State<TemplatePage> {
   @override
   Widget build(BuildContext context) => const Scaffold(
         body: Center(

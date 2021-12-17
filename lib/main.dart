@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'lesson5/lesson5_page.dart';
-import 'lesson6/lesson6_page.dart';
+import 'lesson7/lesson7_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +15,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: const Lesson6Page(),
+        home: const Lesson7Page(),
       );
 }
 

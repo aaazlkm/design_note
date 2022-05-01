@@ -13,12 +13,12 @@ if (flutterRoot == null) {
 
 def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
 if (flutterVersionCode == null) {
-    flutterVersionCode = 'lesson1'
+    flutterVersionCode = 'textScroll'
 }
 
 def flutterVersionName = localProperties.getProperty('flutter.versionName')
 if (flutterVersionName == null) {
-    flutterVersionName = 'lesson1.0'
+    flutterVersionName = 'textScroll.0'
 }
 
 apply plugin: 'com.android.application'

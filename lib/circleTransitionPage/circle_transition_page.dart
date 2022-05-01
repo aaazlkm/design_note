@@ -5,24 +5,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:simple_animations/simple_animations.dart';
 
-class Page {
-  Page({required this.backgroundColor});
+class CircleTransitionPage {
+  CircleTransitionPage({required this.backgroundColor});
 
   final Color backgroundColor;
 }
 
-class Lesson4Page extends StatefulWidget {
-  const Lesson4Page({Key? key}) : super(key: key);
+class _CircleTransitionPage extends StatefulWidget {
+  const _CircleTransitionPage({Key? key}) : super(key: key);
 
   @override
-  _Lesson4PageState createState() => _Lesson4PageState();
+  _CircleTransitionPageState createState() => _CircleTransitionPageState();
 }
 
-class _Lesson4PageState extends State<Lesson4Page> with SingleTickerProviderStateMixin {
-  final List<Page> pages = [
-    Page(backgroundColor: Colors.red),
-    Page(backgroundColor: Colors.yellow),
-    Page(backgroundColor: Colors.blue),
+class _CircleTransitionPageState extends State<_CircleTransitionPage> with SingleTickerProviderStateMixin {
+  final List<CircleTransitionPage> pages = [
+    CircleTransitionPage(backgroundColor: Colors.red),
+    CircleTransitionPage(backgroundColor: Colors.yellow),
+    CircleTransitionPage(backgroundColor: Colors.blue),
   ];
 
   double transitionPercent = 0;

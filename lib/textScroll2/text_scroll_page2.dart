@@ -1,15 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class Lesson2Page extends StatefulWidget {
-  const Lesson2Page({Key? key}) : super(key: key);
+class TextScrollPage2 extends StatefulWidget {
+  const TextScrollPage2({Key? key}) : super(key: key);
 
   @override
-  _Lesson2PageState createState() => _Lesson2PageState();
+  _TextScrollPage2State createState() => _TextScrollPage2State();
 }
 
-class _Lesson2PageState extends State<Lesson2Page>
-    with SingleTickerProviderStateMixin {
+class _TextScrollPage2State extends State<TextScrollPage2> with SingleTickerProviderStateMixin {
   late final AnimationController _animationController;
   final animationCurve = Interval(0.3, 0.7, curve: Curves.easeInOut);
 
@@ -24,18 +23,17 @@ class _Lesson2PageState extends State<Lesson2Page>
   @override
   void initState() {
     super.initState();
-    _animationController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 2000))
-          ..addListener(() {
-            setState(() {});
-          })
-          ..addStatusListener((status) {
-            if (status == AnimationStatus.completed) {
-              _animationController.forward(from: 0);
-              _switchLabel();
-            }
-          })
-          ..forward(from: 0);
+    _animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 2000))
+      ..addListener(() {
+        setState(() {});
+      })
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          _animationController.forward(from: 0);
+          _switchLabel();
+        }
+      })
+      ..forward(from: 0);
   }
 
   @override
@@ -73,20 +71,13 @@ class _Lesson2PageState extends State<Lesson2Page>
                   child: Stack(
                     children: [
                       FractionalTranslation(
-                        translation: Offset(
-                            0,
-                            animationCurve
-                                    .transform(_animationController.value) -
-                                1),
+                        translation: Offset(0, animationCurve.transform(_animationController.value) - 1),
                         child: Center(
                           child: Text(_labels[1]),
                         ),
                       ),
                       FractionalTranslation(
-                        translation: Offset(
-                            0,
-                            animationCurve
-                                .transform(_animationController.value)),
+                        translation: Offset(0, animationCurve.transform(_animationController.value)),
                         child: Center(
                           child: Text(_labels.first),
                         ),

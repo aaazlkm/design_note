@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class Lesson3Page extends StatefulWidget {
-  const Lesson3Page({Key? key}) : super(key: key);
+class PageIndicatorPage extends StatefulWidget {
+  const PageIndicatorPage({Key? key}) : super(key: key);
 
   @override
-  _Lesson3PageState createState() => _Lesson3PageState();
+  _PageIndicatorPageState createState() => _PageIndicatorPageState();
 }
 
-class _Lesson3PageState extends State<Lesson3Page> {
+class _PageIndicatorPageState extends State<PageIndicatorPage> {
   late final PageController _pageController;
 
   @override

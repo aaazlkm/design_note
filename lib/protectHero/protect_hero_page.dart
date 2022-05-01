@@ -3,14 +3,14 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-class Lesson6Page extends StatefulWidget {
-  const Lesson6Page({Key? key}) : super(key: key);
+class ProtectHeroPage extends StatefulWidget {
+  const ProtectHeroPage({Key? key}) : super(key: key);
 
   @override
-  Lesson6PageState createState() => Lesson6PageState();
+  ProtectHeroPageState createState() => ProtectHeroPageState();
 }
 
-class Lesson6PageState extends State<Lesson6Page> {
+class ProtectHeroPageState extends State<ProtectHeroPage> {
   @override
   Widget build(BuildContext context) => Scaffold(
         body: SafeArea(

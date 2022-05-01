@@ -2,14 +2,14 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-class Lesson5Page extends StatefulWidget {
-  const Lesson5Page({Key? key}) : super(key: key);
+class ColorPickerPage extends StatefulWidget {
+  const ColorPickerPage({Key? key}) : super(key: key);
 
   @override
-  Lesson5PageState createState() => Lesson5PageState();
+  ColorPickerPageState createState() => ColorPickerPageState();
 }
 
-class Lesson5PageState extends State<Lesson5Page> {
+class ColorPickerPageState extends State<ColorPickerPage> {
   Color _backgroundColor = selectableColors.first;
 
   void onColorChanged(Color spectrumColor, Color selectedColor) {

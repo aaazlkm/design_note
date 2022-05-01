@@ -1,12 +1,12 @@
 buildscript {
-    ext.kotlin_version = 'lesson1.3.50'
+    ext.kotlin_version = 'textScroll.3.50'
     repositories {
         google()
         jcenter()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.lesson1.0'
+        classpath 'com.android.tools.build:gradle:4.textScroll.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }

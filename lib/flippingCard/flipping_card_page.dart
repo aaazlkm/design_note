@@ -3,16 +3,16 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-class Lesson8Page extends StatefulWidget {
-  const Lesson8Page({Key? key}) : super(key: key);
+class FlippingCardPage extends StatefulWidget {
+  const FlippingCardPage({Key? key}) : super(key: key);
 
   @override
-  _Lesson8PageState createState() => _Lesson8PageState();
+  _FlippingCardPageState createState() => _FlippingCardPageState();
 }
 
 final List<Color> _colors = [Colors.red, Colors.green, Colors.blue];
 
-class _Lesson8PageState extends State<Lesson8Page> {
+class _FlippingCardPageState extends State<FlippingCardPage> {
   int selectableColorIndex = 0;
 
   void _updateIndex(int index) {

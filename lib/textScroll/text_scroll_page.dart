@@ -4,15 +4,14 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class Lesson1Page extends StatefulWidget {
-  const Lesson1Page({Key? key}) : super(key: key);
+class TextScrollPage extends StatefulWidget {
+  const TextScrollPage({Key? key}) : super(key: key);
 
   @override
-  _Lesson1PageState createState() => _Lesson1PageState();
+  _TextScrollPageState createState() => _TextScrollPageState();
 }
 
-class _Lesson1PageState extends State<Lesson1Page>
-    with SingleTickerProviderStateMixin {
+class _TextScrollPageState extends State<TextScrollPage> with SingleTickerProviderStateMixin {
   late final AnimationController _animationController;
   final animationCurve = Interval(0.3, 0.7, curve: Curves.easeInOut);
 
@@ -27,18 +26,17 @@ class _Lesson1PageState extends State<Lesson1Page>
   @override
   void initState() {
     super.initState();
-    _animationController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 2000))
-          ..addListener(() {
-            setState(() {});
-          })
-          ..addStatusListener((status) {
-            if (status == AnimationStatus.completed) {
-              _animationController.forward(from: 0);
-              _switchLabel();
-            }
-          })
-          ..forward(from: 0);
+    _animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 2000))
+      ..addListener(() {
+        setState(() {});
+      })
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          _animationController.forward(from: 0);
+          _switchLabel();
+        }
+      })
+      ..forward(from: 0);
   }
 
   @override
@@ -62,8 +60,7 @@ class _Lesson1PageState extends State<Lesson1Page>
                 size: Size(Size.infinite.width, 30),
                 painter: TextScrollPainter(
                   labels: _labels,
-                  scrollPosition:
-                      animationCurve.transform(_animationController.value),
+                  scrollPosition: animationCurve.transform(_animationController.value),
                 ),
               ),
             ),
@@ -94,20 +91,17 @@ class TextScrollPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final fadeShader =
-        fadeGradient.createShader(Rect.fromLTWH(0, 0, size.width, size.height));
+    final fadeShader = fadeGradient.createShader(Rect.fromLTWH(0, 0, size.width, size.height));
     final fadePaint = Paint()..shader = fadeShader;
 
     final paragraph1 = _buildParagraph(labels.first, size, fadePaint);
     final lineHeight1 = paragraph1.height;
-    final linePosition1 = Offset(
-        0, (size.height - lineHeight1) / 2 + size.height * scrollPosition);
+    final linePosition1 = Offset(0, (size.height - lineHeight1) / 2 + size.height * scrollPosition);
     canvas.drawParagraph(paragraph1, linePosition1);
 
     labels.getRange(1, labels.length).forEachIndexed((index, label) {
       final paragraph2 = _buildParagraph(label, size, fadePaint);
-      final linePosition2 =
-          linePosition1.translate(0, -size.height * (index + 1));
+      final linePosition2 = linePosition1.translate(0, -size.height * (index + 1));
       canvas.drawParagraph(paragraph2, linePosition2);
     });
   }
@@ -119,8 +113,7 @@ class TextScrollPainter extends CustomPainter {
     ))
       ..pushStyle(ui.TextStyle(foreground: paint))
       ..addText(label);
-    return paragraphBuilder.build()
-      ..layout(ui.ParagraphConstraints(width: availableSpace.width));
+    return paragraphBuilder.build()..layout(ui.ParagraphConstraints(width: availableSpace.width));
   }
 
   @override

@@ -1,3 +1,4 @@
+import 'package:design_note/photoshoptColorPicker/photoshop_color_picker_page.dart';
 import 'package:flutter/material.dart';
 
 import 'lesson8/lesson8_page.dart';
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: const Lesson8Page(),
+        home: const PhotoshopColorPickerPage(),
       );
 }
 
@@ -23,10 +24,10 @@ class TemplatePage extends StatefulWidget {
   const TemplatePage({Key? key}) : super(key: key);
 
   @override
-  _TemplatePageState createState() => _TemplatePageState();
+  TemplatePageState createState() => TemplatePageState();
 }
 
-class _TemplatePageState extends State<TemplatePage> {
+class TemplatePageState extends State<TemplatePage> {
   @override
   Widget build(BuildContext context) => const Scaffold(
         body: Center(

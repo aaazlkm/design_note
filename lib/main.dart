@@ -1,5 +1,6 @@
-import 'package:design_note/photoshoptColorPicker/photoshop_color_picker_page.dart';
 import 'package:flutter/material.dart';
+
+import 'customSelectableText/CustomSelectableTextPage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,7 +15,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: const PhotoshopColorPickerPage(),
+        home: const CustomSelectableTextPage(),
       );
 }
 

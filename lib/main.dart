@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'customSelectableText/CustomSelectableTextPage.dart';
+import 'dynamicSprings/dynamic_springs_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: const CustomSelectableTextPage(),
+        home: const DynamicSpringsPage(),
       );
 }
 

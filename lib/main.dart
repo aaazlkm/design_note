@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'dynamicSprings/dynamic_springs_page.dart';
+import 'facePile/face_pile_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: const DynamicSpringsPage(),
+        home: const FacePilePage(),
       );
 }
 

@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class FacePilePage extends StatefulWidget {
   const FacePilePage({Key? key}) : super(key: key);
@@ -15,7 +17,7 @@ class FacePilePageState extends State<FacePilePage> {
             user: User(
               useId: "id",
               name: "name",
-              avatarUrl: "",
+              avatarUrl: "https://randomuser.me/api/portraits/women/31.jpg",
             ),
             nameLabelColor: Color(0xFF222222),
             backgroundColor: Color(0xFF888888),
@@ -52,6 +54,27 @@ class _AvatarCircleState extends State<AvatarCircle> {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: widget.backgroundColor,
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.grey,
+              blurRadius: 3,
+              offset: Offset(5, 5),
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            Text(
+              widget.user.name,
+              style: const TextStyle().copyWith(
+                color: widget.nameLabelColor,
+              ),
+            ),
+            FadeInImage.memoryNetwork(
+              placeholder: kTransparentImage,
+              image: widget.user.avatarUrl,
+            ),
+          ],
         ),
       );
 }

@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
@@ -13,15 +14,69 @@ class FacePilePageState extends State<FacePilePage> {
   @override
   Widget build(BuildContext context) => Scaffold(
         body: Center(
-          child: AvatarCircle(
-            user: User(
-              useId: "id",
-              name: "name",
-              avatarUrl: "https://randomuser.me/api/portraits/women/31.jpg",
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: 200),
+            child: _FacePile(
+              users: [
+                User(
+                  useId: "id",
+                  name: "name",
+                  avatarUrl: "https://randomuser.me/api/portraits/women/31.jpg",
+                ),
+                User(
+                  useId: "id",
+                  name: "name",
+                  avatarUrl: "https://randomuser.me/api/portraits/women/31.jpg",
+                ),
+                User(
+                  useId: "id",
+                  name: "name",
+                  avatarUrl: "https://randomuser.me/api/portraits/women/31.jpg",
+                ),
+                User(
+                  useId: "id",
+                  name: "name",
+                  avatarUrl: "https://randomuser.me/api/portraits/women/31.jpg",
+                ),
+              ],
             ),
-            nameLabelColor: Color(0xFF222222),
-            backgroundColor: Color(0xFF888888),
           ),
+        ),
+      );
+}
+
+class _FacePile extends StatelessWidget {
+  const _FacePile({
+    required this.users,
+    this.faceSize = 48.0,
+    this.overlapPercent = 0.1,
+    Key? key,
+  }) : super(key: key);
+
+  final List<User> users;
+  final double faceSize;
+  final double overlapPercent;
+
+  /// TODO clip系の処理
+  @override
+  Widget build(BuildContext context) => SizedBox(
+        height: faceSize,
+        child: Stack(
+          children: [
+            ...users.mapIndexed(
+              (index, element) => Positioned(
+                left: index * (1 - overlapPercent) * faceSize,
+                top: 0,
+                height: faceSize,
+                width: faceSize,
+                child: AvatarCircle(
+                  user: element,
+                  nameLabelColor: const Color(0xFF222222),
+                  backgroundColor: const Color(0xFF888888),
+                ),
+              ),
+            )
+          ],
         ),
       );
 }

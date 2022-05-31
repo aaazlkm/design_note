@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,36 +13,53 @@ class FacePilePage extends StatefulWidget {
 }
 
 class FacePilePageState extends State<FacePilePage> {
+  final List<User> users = [];
+
+  void onAddTapped() {
+    setState(() {
+      users.add(generateUser());
+    });
+  }
+
+  void onDeleteTapped() {
+    setState(() {
+      if (users.isEmpty) {
+        return;
+      }
+      final randomIndex = Random().nextInt(users.length);
+      users.removeAt(randomIndex);
+    });
+  }
+
+  User generateUser() => User(
+        useId: "id",
+        name: "name",
+        avatarUrl: "https://randomuser.me/api/portraits/women/31.jpg",
+      );
+
   @override
   Widget build(BuildContext context) => Scaffold(
         body: Center(
           child: ConstrainedBox(
             constraints: BoxConstraints(maxWidth: 200),
             child: _FacePile(
-              users: [
-                User(
-                  useId: "id",
-                  name: "name",
-                  avatarUrl: "https://randomuser.me/api/portraits/women/31.jpg",
-                ),
-                User(
-                  useId: "id",
-                  name: "name",
-                  avatarUrl: "https://randomuser.me/api/portraits/women/31.jpg",
-                ),
-                User(
-                  useId: "id",
-                  name: "name",
-                  avatarUrl: "https://randomuser.me/api/portraits/women/31.jpg",
-                ),
-                User(
-                  useId: "id",
-                  name: "name",
-                  avatarUrl: "https://randomuser.me/api/portraits/women/31.jpg",
-                ),
-              ],
+              users: users,
             ),
           ),
+        ),
+        floatingActionButton: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            FloatingActionButton(
+              onPressed: onDeleteTapped,
+              child: const Icon(Icons.close),
+            ),
+            const SizedBox(width: 16),
+            FloatingActionButton(
+              onPressed: onAddTapped,
+              child: const Icon(Icons.add),
+            ),
+          ],
         ),
       );
 }
@@ -59,26 +78,36 @@ class _FacePile extends StatelessWidget {
 
   /// TODO clip系の処理
   @override
-  Widget build(BuildContext context) => SizedBox(
-        height: faceSize,
-        child: Stack(
-          children: [
-            ...users.mapIndexed(
-              (index, element) => Positioned(
-                left: index * (1 - overlapPercent) * faceSize,
-                top: 0,
-                height: faceSize,
-                width: faceSize,
-                child: AvatarCircle(
-                  user: element,
-                  nameLabelColor: const Color(0xFF222222),
-                  backgroundColor: const Color(0xFF888888),
+  Widget build(BuildContext context) => LayoutBuilder(builder: (context, constraints) {
+        var faceVisiblePercent = 1 - overlapPercent;
+        var intrinsicWidth = users.length == 1 ? faceSize : (faceVisiblePercent * (users.length - 1) + 1) * faceSize;
+        if (constraints.maxWidth < intrinsicWidth) {
+          // (faceVisible * faceSize) * (length - 1) + faceSize = maxWidth
+          faceVisiblePercent = (constraints.maxWidth - faceSize) / ((users.length - 1) * faceSize);
+          intrinsicWidth = constraints.maxWidth;
+        }
+
+        return SizedBox(
+          height: faceSize,
+          child: Stack(
+            children: [
+              ...users.mapIndexed(
+                (index, element) => Positioned(
+                  left: index * faceVisiblePercent * faceSize + (constraints.maxWidth - intrinsicWidth) / 2,
+                  top: 0,
+                  height: faceSize,
+                  width: faceSize,
+                  child: AvatarCircle(
+                    user: element,
+                    nameLabelColor: const Color(0xFF222222),
+                    backgroundColor: const Color(0xFF888888),
+                  ),
                 ),
-              ),
-            )
-          ],
-        ),
-      );
+              )
+            ],
+          ),
+        );
+      });
 }
 
 class AvatarCircle extends StatefulWidget {

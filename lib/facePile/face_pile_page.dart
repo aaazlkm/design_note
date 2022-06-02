@@ -32,7 +32,7 @@ class FacePilePageState extends State<FacePilePage> {
   }
 
   User generateUser() => User(
-        useId: "id",
+        useId: "${Random().nextInt(100000)}",
         name: "name",
         avatarUrl: "https://randomuser.me/api/portraits/women/31.jpg",
       );
@@ -87,20 +87,33 @@ class _FacePile extends StatelessWidget {
           intrinsicWidth = constraints.maxWidth;
         }
 
+        late final double leftOffset;
+        if (intrinsicWidth > constraints.maxWidth) {
+          leftOffset = 0;
+        } else {
+          leftOffset = (constraints.maxWidth - intrinsicWidth) / 2;
+        }
+
         return SizedBox(
           height: faceSize,
           child: Stack(
             children: [
               ...users.mapIndexed(
-                (index, element) => Positioned(
-                  left: index * faceVisiblePercent * faceSize + (constraints.maxWidth - intrinsicWidth) / 2,
+                (index, element) => AnimatedPositioned(
+                  key: ValueKey(element.useId),
+                  left: index * faceVisiblePercent * faceSize + leftOffset,
                   top: 0,
                   height: faceSize,
                   width: faceSize,
-                  child: AvatarCircle(
-                    user: element,
-                    nameLabelColor: const Color(0xFF222222),
-                    backgroundColor: const Color(0xFF888888),
+                  duration: const Duration(milliseconds: 100),
+                  child: AnimatedScaleInOut(
+                    show: true,
+                    onDismissed: () {},
+                    child: AvatarCircle(
+                      user: element,
+                      nameLabelColor: const Color(0xFF222222),
+                      backgroundColor: const Color(0xFF888888),
+                    ),
                   ),
                 ),
               )
@@ -108,6 +121,67 @@ class _FacePile extends StatelessWidget {
           ),
         );
       });
+}
+
+class AnimatedScaleInOut extends StatefulWidget {
+  const AnimatedScaleInOut({
+    required this.show,
+    required this.onDismissed,
+    required this.child,
+    Key? key,
+  }) : super(key: key);
+
+  final bool show;
+  final VoidCallback onDismissed;
+  final Widget child;
+
+  @override
+  State<AnimatedScaleInOut> createState() => _AnimatedScaleInOutState();
+}
+
+class _AnimatedScaleInOutState extends State<AnimatedScaleInOut> with SingleTickerProviderStateMixin {
+  late final AnimationController animationController;
+  late final Animation<double> scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 100))
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.dismissed) {
+          widget.onDismissed();
+        }
+      });
+    scaleAnimation = CurvedAnimation(parent: animationController, curve: Curves.elasticOut);
+    syncScaleAnimationWithWidget();
+  }
+
+  @override
+  void didUpdateWidget(AnimatedScaleInOut oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    syncScaleAnimationWithWidget();
+  }
+
+  @override
+  void dispose() {
+    animationController.dispose();
+    super.dispose();
+  }
+
+  void syncScaleAnimationWithWidget() {
+    if (widget.show && !animationController.isAnimating) {
+      animationController.forward();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => AnimatedBuilder(
+        animation: animationController,
+        builder: (context, child) => Transform.scale(
+          scale: scaleAnimation.value,
+        ),
+        child: widget.child,
+      );
 }
 
 class AvatarCircle extends StatefulWidget {

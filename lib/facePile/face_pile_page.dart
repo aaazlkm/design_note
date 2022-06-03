@@ -64,7 +64,7 @@ class FacePilePageState extends State<FacePilePage> {
       );
 }
 
-class _FacePile extends StatelessWidget {
+class _FacePile extends StatefulWidget {
   const _FacePile({
     required this.users,
     this.faceSize = 48.0,
@@ -76,51 +76,90 @@ class _FacePile extends StatelessWidget {
   final double faceSize;
   final double overlapPercent;
 
-  /// TODO clip系の処理
   @override
-  Widget build(BuildContext context) => LayoutBuilder(builder: (context, constraints) {
-        var faceVisiblePercent = 1 - overlapPercent;
-        var intrinsicWidth = users.length == 1 ? faceSize : (faceVisiblePercent * (users.length - 1) + 1) * faceSize;
-        if (constraints.maxWidth < intrinsicWidth) {
-          // (faceVisible * faceSize) * (length - 1) + faceSize = maxWidth
-          faceVisiblePercent = (constraints.maxWidth - faceSize) / ((users.length - 1) * faceSize);
-          intrinsicWidth = constraints.maxWidth;
-        }
+  State<_FacePile> createState() => _FacePileState();
+}
 
-        late final double leftOffset;
-        if (intrinsicWidth > constraints.maxWidth) {
-          leftOffset = 0;
-        } else {
-          leftOffset = (constraints.maxWidth - intrinsicWidth) / 2;
-        }
+class _FacePileState extends State<_FacePile> {
+  List<User> currentUsers = <User>[];
 
-        return SizedBox(
-          height: faceSize,
-          child: Stack(
-            children: [
-              ...users.mapIndexed(
-                (index, element) => AnimatedPositioned(
-                  key: ValueKey(element.useId),
-                  left: index * faceVisiblePercent * faceSize + leftOffset,
-                  top: 0,
-                  height: faceSize,
-                  width: faceSize,
-                  duration: const Duration(milliseconds: 100),
-                  child: AnimatedScaleInOut(
-                    show: true,
-                    onDismissed: () {},
-                    child: AvatarCircle(
-                      user: element,
-                      nameLabelColor: const Color(0xFF222222),
-                      backgroundColor: const Color(0xFF888888),
+  @override
+  void initState() {
+    super.initState();
+    syncUsersWithPile();
+  }
+
+  @override
+  void didUpdateWidget(_FacePile oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    syncUsersWithPile();
+  }
+
+  void syncUsersWithPile() {
+    final newUserSet = widget.users.toSet();
+    final currentUserSet = currentUsers.toSet();
+    final added = newUserSet.difference(currentUserSet);
+    setState(() {
+      currentUsers.addAll(added);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+        builder: (context, constraints) {
+          var faceVisiblePercent = 1 - widget.overlapPercent;
+          var intrinsicWidth = currentUsers.length == 1
+              ? widget.faceSize
+              : (faceVisiblePercent * (currentUsers.length - 1) + 1) * widget.faceSize;
+          if (constraints.maxWidth < intrinsicWidth) {
+            // (faceVisible * faceSize) * (length - 1) + faceSize = maxWidth
+            faceVisiblePercent =
+                (constraints.maxWidth - widget.faceSize) / ((currentUsers.length - 1) * widget.faceSize);
+            intrinsicWidth = constraints.maxWidth;
+          }
+
+          late final double leftOffset;
+          if (intrinsicWidth > constraints.maxWidth) {
+            leftOffset = 0;
+          } else {
+            leftOffset = (constraints.maxWidth - intrinsicWidth) / 2;
+          }
+
+          return SizedBox(
+            height: widget.faceSize,
+            child: Stack(
+              children: [
+                ...currentUsers.mapIndexed(
+                  (index, currentUser) => AnimatedPositioned(
+                    key: ValueKey(currentUser.useId),
+                    left: index * faceVisiblePercent * widget.faceSize + leftOffset,
+                    top: 0,
+                    height: widget.faceSize,
+                    width: widget.faceSize,
+                    duration: const Duration(milliseconds: 100),
+                    child: AnimatedScaleInOut(
+                      show: widget.users.contains(currentUser),
+                      onDismissed: () {
+                        final newUserSet = widget.users.toSet();
+                        final currentUserSet = currentUsers.toSet();
+                        final deleted = currentUserSet.difference(newUserSet);
+                        setState(() {
+                          currentUsers.removeWhere(deleted.contains);
+                        });
+                      },
+                      child: AvatarCircle(
+                        user: currentUser,
+                        nameLabelColor: const Color(0xFF222222),
+                        backgroundColor: const Color(0xFF888888),
+                      ),
                     ),
                   ),
-                ),
-              )
-            ],
-          ),
-        );
-      });
+                )
+              ],
+            ),
+          );
+        },
+      );
 }
 
 class AnimatedScaleInOut extends StatefulWidget {
@@ -146,7 +185,8 @@ class _AnimatedScaleInOutState extends State<AnimatedScaleInOut> with SingleTick
   @override
   void initState() {
     super.initState();
-    animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 100))
+    animationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 300), reverseDuration: Duration(milliseconds: 200))
       ..addStatusListener((status) {
         if (status == AnimationStatus.dismissed) {
           widget.onDismissed();
@@ -169,8 +209,12 @@ class _AnimatedScaleInOutState extends State<AnimatedScaleInOut> with SingleTick
   }
 
   void syncScaleAnimationWithWidget() {
-    if (widget.show && !animationController.isAnimating) {
+    if (widget.show && !animationController.isCompleted && animationController.status != AnimationStatus.forward) {
       animationController.forward();
+    } else if (!widget.show &&
+        !animationController.isDismissed &&
+        animationController.status != AnimationStatus.reverse) {
+      animationController.reverse();
     }
   }
 
@@ -179,6 +223,7 @@ class _AnimatedScaleInOutState extends State<AnimatedScaleInOut> with SingleTick
         animation: animationController,
         builder: (context, child) => Transform.scale(
           scale: scaleAnimation.value,
+          child: child,
         ),
         child: widget.child,
       );

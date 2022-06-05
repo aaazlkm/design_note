@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'facePile/face_pile_page.dart';
+import 'glitchyText/glitchy_text_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: const FacePilePage(),
+        home: const GlitchyTextPage(),
       );
 }
 

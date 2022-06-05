@@ -5,6 +5,18 @@
   - ポジション変更するだけで勝手にアニメーションできるのか
   - てっきりこっちで各アイテムに対して、AnimationController を生成するのかと思ってた
   - アニメーションやる時は、暗黙的なアニメーション View で使えるものがないかちゃんと確認をしよう
-- 自分でanimationWidget作成すること機は、引数にwidhiget受け取って、内部でanimationControllerを使用して色々やるんだろうな
-- antiAliasって何？
-  - 
+- 自分で animationWidget 作成すること機は、引数に widhiget 受け取って、内部で animationController を使用して色々やるんだろうな
+- clip って何？
+  - クリップの動作を指定する enum
+  - none
+    - 何もクリップしない
+    - 何かクリップするなら、none 以外の値を指定する
+  - hardEdge
+    - クリップする速度は早いが、曲線などでアンチエイリアスの効果を適用しない
+    - なので、直線などに使うのが良さそう
+  - atialias
+    - 曲線をクリップするときにジャギーが出ないようにしてくれる
+    - ただ、hardEdge より遅い
+  - antialias with save layer
+    - 遅いし、滅多に必要な時がない
+    - とりあえず、使わない方針でいいか

@@ -1,6 +1,7 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 class NeonHorizonPage extends StatefulWidget {
   const NeonHorizonPage({Key? key}) : super(key: key);
@@ -22,7 +23,9 @@ class NeonHorizonPageState extends State<NeonHorizonPage> {
                 color: Color.alphaBlend(Colors.black.withOpacity(0.6), Colors.deepPurple.shade900),
                 borderRadius: BorderRadius.all(const Radius.circular(16)),
               ),
-              child: const NeonHorizon(),
+              child: NeonHorizon(
+                lineColor: Colors.yellow.shade600,
+              ),
             ),
           ),
         ),
@@ -30,16 +33,58 @@ class NeonHorizonPageState extends State<NeonHorizonPage> {
 }
 
 class NeonHorizon extends StatefulWidget {
-  const NeonHorizon({Key? key}) : super(key: key);
+  const NeonHorizon({
+    required this.lineColor,
+    this.isAnimating = true,
+    Key? key,
+  }) : super(key: key);
+
+  final Color lineColor;
+  final bool isAnimating;
 
   @override
   State<NeonHorizon> createState() => _NeonHorizonState();
 }
 
-class _NeonHorizonState extends State<NeonHorizon> {
+class _NeonHorizonState extends State<NeonHorizon> with SingleTickerProviderStateMixin {
+  late final Ticker ticker;
+
+  void onTick(Duration elapsedTime) {}
+
+  @override
+  void initState() {
+    super.initState();
+    ticker = createTicker(onTick);
+    if (widget.isAnimating) {
+      ticker.start();
+    }
+  }
+
+  @override
+  void didUpdateWidget(NeonHorizon oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isAnimating  != oldWidget.isAnimating) {
+      if (widget.isAnimating) {
+        ticker.start();
+      } else {
+        ticker.stop();
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    ticker
+      ..stop()
+      ..dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) => CustomPaint(
-        painter: NeonHorizonPainter(primaryColor: Colors.yellow.shade600),
+        painter: NeonHorizonPainter(
+          primaryColor: Colors.yellow.shade600,
+        ),
       );
 }
 
@@ -52,6 +97,7 @@ class NeonHorizonPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    _paintVerticalLine(canvas, size);
     _paintBackground(canvas, size);
   }
 
@@ -66,6 +112,31 @@ class NeonHorizonPainter extends CustomPainter {
         ],
       );
     canvas.drawRect(Offset.zero & size, paint);
+  }
+
+  void _paintVerticalLine(Canvas canvas, Size size) {
+    final linePaint = Paint()
+      ..color = primaryColor
+      ..strokeWidth = 2;
+
+    final centerX = size.width / 2;
+    const spacing = 30;
+    var deltaX = 0;
+    while (centerX - deltaX > 0) {
+      canvas
+        ..drawLine(
+          Offset(centerX + deltaX, 0),
+          Offset(centerX + 2.5 * deltaX, size.height),
+          linePaint,
+        )
+        ..drawLine(
+          Offset(centerX - deltaX, 0),
+          Offset(centerX - 2.5 * deltaX, size.height),
+          linePaint,
+        );
+
+      deltaX += spacing;
+    }
   }
 
   @override

@@ -48,8 +48,29 @@ class NeonHorizon extends StatefulWidget {
 
 class _NeonHorizonState extends State<NeonHorizon> with SingleTickerProviderStateMixin {
   late final Ticker ticker;
+  final List<Duration> addedLineTimes = [];
+  List<double> distancePercents = [];
+  final animationDuration = Duration(seconds: 3);
 
-  void onTick(Duration elapsedTime) {}
+  void onTick(Duration elapsedTime) {
+    final latestAddVerticalLIneTime = addedLineTimes.isEmpty ? null : addedLineTimes.last;
+    if (latestAddVerticalLIneTime == null) {
+      addedLineTimes.add(elapsedTime);
+    }
+
+    if (latestAddVerticalLIneTime != null &&
+        (elapsedTime.inMilliseconds - latestAddVerticalLIneTime.inMilliseconds) >
+            const Duration(milliseconds: 500).inMilliseconds) {
+      addedLineTimes.add(elapsedTime);
+    }
+
+    setState(() {
+      distancePercents = addedLineTimes
+          .map((lineTime) => (elapsedTime.inMilliseconds - lineTime.inMilliseconds) / animationDuration.inMilliseconds)
+          .where((element) => element <= 1.0)
+          .toList();
+    });
+  }
 
   @override
   void initState() {
@@ -63,7 +84,7 @@ class _NeonHorizonState extends State<NeonHorizon> with SingleTickerProviderStat
   @override
   void didUpdateWidget(NeonHorizon oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.isAnimating  != oldWidget.isAnimating) {
+    if (widget.isAnimating != oldWidget.isAnimating) {
       if (widget.isAnimating) {
         ticker.start();
       } else {
@@ -84,6 +105,7 @@ class _NeonHorizonState extends State<NeonHorizon> with SingleTickerProviderStat
   Widget build(BuildContext context) => CustomPaint(
         painter: NeonHorizonPainter(
           primaryColor: Colors.yellow.shade600,
+          distancePercents: distancePercents,
         ),
       );
 }
@@ -91,14 +113,29 @@ class _NeonHorizonState extends State<NeonHorizon> with SingleTickerProviderStat
 class NeonHorizonPainter extends CustomPainter {
   NeonHorizonPainter({
     required this.primaryColor,
+    required this.distancePercents,
   });
 
   final Color primaryColor;
+  final List<double> distancePercents;
 
   @override
   void paint(Canvas canvas, Size size) {
-    _paintVerticalLine(canvas, size);
+    final linePaint = Paint()
+      ..color = primaryColor
+      ..strokeWidth = 2;
+
+    _paintVerticalLine(canvas, size, linePaint);
     _paintBackground(canvas, size);
+
+    for (final percent in distancePercents) {
+      final y = size.height * (1 - percent);
+      canvas.drawLine(
+        Offset(0, y),
+        Offset(size.width, y),
+        linePaint,
+      );
+    }
   }
 
   void _paintBackground(Canvas canvas, Size size) {
@@ -114,11 +151,7 @@ class NeonHorizonPainter extends CustomPainter {
     canvas.drawRect(Offset.zero & size, paint);
   }
 
-  void _paintVerticalLine(Canvas canvas, Size size) {
-    final linePaint = Paint()
-      ..color = primaryColor
-      ..strokeWidth = 2;
-
+  void _paintVerticalLine(Canvas canvas, Size size, Paint linePaint) {
     final centerX = size.width / 2;
     const spacing = 30;
     var deltaX = 0;
@@ -140,5 +173,6 @@ class NeonHorizonPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(NeonHorizonPainter oldDelegate) => primaryColor != oldDelegate.primaryColor;
+  bool shouldRepaint(NeonHorizonPainter oldDelegate) =>
+      primaryColor != oldDelegate.primaryColor || distancePercents != oldDelegate.distancePercents;
 }

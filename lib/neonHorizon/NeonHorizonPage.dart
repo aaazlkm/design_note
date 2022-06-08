@@ -67,7 +67,9 @@ class _NeonHorizonState extends State<NeonHorizon> with SingleTickerProviderStat
     setState(() {
       distancePercents = addedLineTimes
           .map((lineTime) => (elapsedTime.inMilliseconds - lineTime.inMilliseconds) / animationDuration.inMilliseconds)
-          .where((element) => element <= 1.0)
+          .where((element) => element <= 1.0 && element >= 0.0)
+          .map((e) => Curves.easeOutSine.transform(e))
+          .where((element) => element <= 1.0 && element >= 0.0)
           .toList();
     });
   }

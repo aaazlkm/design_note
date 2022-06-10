@@ -21,12 +21,45 @@ class NeonHorizonPageState extends State<NeonHorizonPage> {
               height: 200,
               clipBehavior: Clip.antiAlias,
               decoration: BoxDecoration(
-                color: Color.alphaBlend(Colors.black.withOpacity(0.6), Colors.deepPurple.shade900),
+                // color: Color.alphaBlend(Colors.black.withOpacity(0.6), Colors.deepPurple.shade900),
                 borderRadius: BorderRadius.all(const Radius.circular(16)),
               ),
-              child: NeonHorizon(
-                lineColor: Colors.yellow.shade600,
+              child: ShaderMask(
+                shaderCallback: (rect) => LinearGradient(
+                  colors: [
+                    Colors.red.withOpacity(0.1),
+                    Colors.red.withOpacity(0.4),
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  stops: [
+                    0.1,
+                    0.2,
+                  ],
+                ).createShader(rect),
+                child: Center(
+                  child: const Text(
+                    "Shader Mask",
+                    style: TextStyle(fontSize: 30, color: Colors.black),
+                  ),
+                ),
               ),
+              // child: ShaderMask(
+              //   shaderCallback: (rect) => LinearGradient(
+              //       colors: [
+              //         Colors.white.withOpacity(0.1),
+              //         Colors.white.withOpacity(0.7),
+              //       ],
+              //       begin: Alignment.topCenter,
+              //       end: Alignment.bottomCenter,
+              //       stops: [
+              //         0.1,
+              //         0.4,
+              //       ]).createShader(rect),
+              //   child: NeonHorizon(
+              //     lineColor: Colors.yellow.shade600,
+              //   ),
+              // ),
             ),
           ),
         ),

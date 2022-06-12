@@ -44,39 +44,57 @@ class SystemStarsPainter extends CustomPainter {
     final starPaint = Paint()..color = Colors.black;
     final center = size.center(Offset.zero);
 
-    const outerRadius = 100;
-    const innerRadius = 40;
-    var angle = -pi / 2;
-
-    final starPath = Path()
-      ..moveTo(
-        outerRadius * cos(angle) + center.dx,
-        outerRadius * sin(angle) + center.dy,
-      );
-
-    angle += (2 * pi) / 10;
-    starPath.lineTo(
-      innerRadius * cos(angle) + center.dx,
-      innerRadius * sin(angle) + center.dy,
+    final starTemplate = StarTemplate(
+      outerRadius: 100,
+      innerRadius: 40,
     );
 
-    for (var i = 1; i < 5; i++) {
-      angle += (2 * pi) / 10;
-      starPath.lineTo(
-        outerRadius * cos(angle) + center.dx,
-        outerRadius * sin(angle) + center.dy,
-      );
-      angle += (2 * pi) / 10;
-      starPath.lineTo(
-        innerRadius * cos(angle) + center.dx,
-        innerRadius * sin(angle) + center.dy,
-      );
-    }
-    starPath.close();
-
-    canvas.drawPath(starPath, starPaint);
+    canvas
+      ..save()
+      ..translate(center.dx, center.dy)
+      ..drawPath(starTemplate.toPath(), starPaint)
+      ..restore();
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+}
+
+class StarTemplate {
+  StarTemplate({
+    this.pointCount = 6,
+    required this.outerRadius,
+    required this.innerRadius,
+  });
+
+  final double pointCount;
+  final double outerRadius;
+  final double innerRadius;
+
+  Path toPath() {
+    const startAngle = -pi / 2;
+    final angleIncrement = 2 * pi / (pointCount * 2);
+
+    final starPath = Path()
+      ..moveTo(
+        outerRadius * cos(startAngle),
+        outerRadius * sin(startAngle),
+      );
+
+    for (var i = 1; i < pointCount * 2; i += 2) {
+      final innerAngle = i * angleIncrement;
+      final outerAngle = (i + 1) * angleIncrement;
+      starPath
+        ..lineTo(
+          innerRadius * cos(startAngle + innerAngle),
+          innerRadius * sin(startAngle + innerAngle),
+        )
+        ..lineTo(
+          outerRadius * cos(startAngle + outerAngle),
+          outerRadius * sin(startAngle + outerAngle),
+        );
+    }
+    starPath.close();
+    return starPath;
+  }
 }

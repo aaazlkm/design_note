@@ -11,5 +11,8 @@ Saves a copy of the current transform and clip on the save stack.
   - save layer
     - 描画したのものに合成できる
     - blende mode で指定できる
+  - これは starTemplate の中で、現在地を与えてやってもできる
+    - が、クラスの役割的に startTemplate は start の外径の path だけを計算する処理にしたいので、現在地に移動する手段は canvas.translate を使用しているのだと感じた
 - innter radius と outer radius の考えで多角形の描画ができる
   - バッジの表現などをこれでできる
+- 初期化するための値が後で来る場合は、フラグ用意してクラスを管理する

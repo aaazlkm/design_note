@@ -16,3 +16,7 @@ Saves a copy of the current transform and clip on the save stack.
 - innter radius と outer radius の考えで多角形の描画ができる
   - バッジの表現などをこれでできる
 - 初期化するための値が後で来る場合は、フラグ用意してクラスを管理する
+- custom painter は Listenable を受け取ることができ、この状態が更新されたタイミングで repaint することができる
+  - これって、customPainter の状態を changeNotifier とかで持った方がいいってことだな。
+  - そうすれば、状態の管理と、描画処理を完全に分けることができる
+    - カスタム Painter の処理がいかつくなってきたら、changeNotifier を使用するようにしよう

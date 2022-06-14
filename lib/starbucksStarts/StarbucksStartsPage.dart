@@ -33,14 +33,16 @@ class _FloatingStarsState extends State<FloatingStars> with SingleTickerProvider
   Duration? _previousFrameTime = null;
 
   void onTick(Duration elapsedTime) {
+    final dt = elapsedTime - (_previousFrameTime ?? elapsedTime);
+    startSystem.update(elapsedTime);
     _previousFrameTime = elapsedTime;
   }
 
   @override
   void initState() {
     super.initState();
-    startSystem = StarSystem(maxStarCount: 50);
-    ticker = createTicker(onTick);
+    startSystem = StarSystem(maxStarCount: 100);
+    ticker = createTicker(onTick)..start();
   }
 
   @override
@@ -50,20 +52,22 @@ class _FloatingStarsState extends State<FloatingStars> with SingleTickerProvider
   }
 
   @override
-  Widget build(BuildContext context) => Container(
-        width: 500,
-        height: 300,
-        decoration: BoxDecoration(
-          color: Colors.yellow.shade700,
-          borderRadius: BorderRadius.all(Radius.circular(16)),
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: Center(
-          child: CustomPaint(
-            painter: SystemStarsPainter(
-              starSystem: startSystem,
+  Widget build(BuildContext context) => LayoutBuilder(
+        builder: (context, constraints) => Container(
+          width: constraints.maxWidth * 0.8,
+          height: constraints.maxWidth * 0.8 * 0.6,
+          decoration: BoxDecoration(
+            color: Colors.yellow.shade700,
+            borderRadius: BorderRadius.all(Radius.circular(16)),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: Center(
+            child: CustomPaint(
+              painter: SystemStarsPainter(
+                starSystem: startSystem,
+              ),
+              size: Size.infinite,
             ),
-            size: Size.infinite,
           ),
         ),
       );
@@ -72,7 +76,7 @@ class _FloatingStarsState extends State<FloatingStars> with SingleTickerProvider
 class SystemStarsPainter extends CustomPainter {
   SystemStarsPainter({
     required this.starSystem,
-  });
+  }) : super(repaint: starSystem);
 
   final StarSystem starSystem;
 
@@ -80,7 +84,7 @@ class SystemStarsPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     starSystem.init(size);
 
-    starSystem.stars.forEach((star) {
+    for (final star in starSystem.stars) {
       final starPaint = Paint()..color = star.color;
       final starTemplate = StarTemplate(
         outerRadius: star.radius,
@@ -93,14 +97,14 @@ class SystemStarsPainter extends CustomPainter {
         ..rotate(star.rotation)
         ..drawPath(starTemplate.toPath(), starPaint)
         ..restore();
-    });
+    }
   }
 
   @override
   bool shouldRepaint(covariant SystemStarsPainter oldDelegate) => starSystem != oldDelegate.starSystem;
 }
 
-class StarSystem {
+class StarSystem extends ChangeNotifier {
   StarSystem({
     required this.maxStarCount,
   });
@@ -108,28 +112,64 @@ class StarSystem {
   bool _isInitialized = false;
   final int maxStarCount;
   final List<StarParticle> stars = [];
+  late final Size _worldSize;
 
   void init(Size worldSize) {
     if (_isInitialized) {
       return;
     }
     _isInitialized = true;
+    _worldSize = worldSize;
 
+    _generateStars(Duration.zero);
+  }
+
+  void update(Duration dt) {
+    if (!_isInitialized) {
+      return;
+    }
+    _cullOffsetStars();
+    _generateStars(dt);
+    for (final star in stars) {
+      star.update(dt);
+    }
+    notifyListeners();
+  }
+
+  void _cullOffsetStars() {
+    if (!_isInitialized) {
+      return;
+    }
+    for (var i = stars.length - 1; i >= 0; i--) {
+      if (stars[i].position.dx > _worldSize.width) {
+        stars.removeAt(i);
+      }
+    }
+  }
+
+  void _generateStars(Duration dt) {
+    if (!_isInitialized) {
+      return;
+    }
     final random = Random();
-    for (var i = 0; i < maxStarCount; i++) {
+    for (var i = 0; i < maxStarCount - stars.length; i++) {
       stars.add(
         StarParticle(
           position: Offset(
-            random.nextDouble() * worldSize.width,
-            random.nextDouble() * worldSize.height,
+            (random.nextDouble() * _worldSize.width * 0.3) - _worldSize.width * 0.3,
+            random.nextDouble() * _worldSize.height,
           ),
-          radius: lerpDouble(10.0, 30.0, random.nextDouble())!,
+          radius: lerpDouble(5.0, 20.0, random.nextDouble())!,
           color: Color.lerp(
             Colors.yellow.shade300,
             Colors.yellow.shade700,
             random.nextDouble(),
           )!,
+          velocity: lerpDouble(20, 200, random.nextDouble())!,
+          acceleration: lerpDouble(20, 200, random.nextDouble())!,
           rotation: lerpDouble(0, 2 * pi, random.nextDouble())!,
+          radialVelocity: lerpDouble(0, pi / 8, random.nextDouble())!,
+          initializeDurtion: dt,
         ),
       );
     }
@@ -141,20 +181,32 @@ class StarParticle {
     required this.position,
     required this.radius,
     required this.color,
-    this.velocity = Offset.zero,
+    required this.initializeDurtion,
+    this.velocity = 0,
+    this.acceleration = 0,
     this.rotation = 0,
     this.radialVelocity = 0,
   });
 
-  final Offset position;
+  Offset position;
   final double radius;
   final Color color;
-  final Offset velocity;
-  final double rotation;
+  final double velocity;
+  final double acceleration;
+  double rotation;
   final double radialVelocity;
+  final Duration initializeDurtion;
 
-  void onTick(Duration elapsedTime) {
-    // TODO
+  Duration? duration = null;
+
+  void update(Duration dt) {
+    final aaa = dt - initializeDurtion;
+    position = Offset(
+        (velocity * (aaa.inMilliseconds / 1000)).toDouble() +
+            acceleration * pow(aaa.inMilliseconds / 1000, 2).toDouble(),
+        position.dy);
+    rotation += radialVelocity * (((aaa - (duration ?? aaa)).inMilliseconds) / 1000);
+    duration = aaa;
   }
 }
 

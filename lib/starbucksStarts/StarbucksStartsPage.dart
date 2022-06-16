@@ -197,7 +197,7 @@ class StarParticle {
   final double radialVelocity;
   final Duration initializeDurtion;
 
-  Duration? duration = null;
+  Duration? duration;
 
   void update(Duration dt) {
     final aaa = dt - initializeDurtion;

@@ -18,9 +18,9 @@ class Processing extends StatelessWidget {
 }
 
 abstract class Sketch {
-  void setup();
+  void setup() {}
 
-  void draw();
+  void draw() {}
 
   late final Canvas canvas;
 

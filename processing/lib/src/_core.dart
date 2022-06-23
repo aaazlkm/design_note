@@ -28,6 +28,11 @@ class Sketch {
 
   final Function(Sketch)? _draw;
 
+  void _doOnSetup() {
+    background(color: const Color(0xffC5C5C5));
+    setup();
+  }
+
   void setup() {
     _setup?.call(this);
   }
@@ -60,7 +65,7 @@ class _SketchPainter extends CustomPainter {
     sketch
       ..canvas = canvas
       ..size = size
-      ..setup()
+      .._doOnSetup()
       ..draw();
   }
 

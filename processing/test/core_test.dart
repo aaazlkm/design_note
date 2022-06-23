@@ -1,5 +1,4 @@
-import 'dart:ui';
-
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:golden_toolkit/golden_toolkit.dart';
 import 'package:processing/src/_core.dart';
@@ -16,7 +15,14 @@ void main() {
             ..devicePixelRatioTestValue = 1.0;
 
           await tester.pumpWidget(Processing(
-            sketch: TestSketch(),
+            sketch: Sketch.simple(
+              setup: (s) {
+                s.background(color: Colors.red);
+              },
+              draw: (s) {
+                s.background(color: Colors.green);
+              },
+            ),
           ));
 
           await screenMatchesGolden(tester, 'core_draw_background');
@@ -24,11 +30,4 @@ void main() {
       );
     },
   );
-}
-
-class TestSketch extends Sketch {
-  @override
-  void draw() {
-    background(color: const Color(0xFF404040));
-  }
 }

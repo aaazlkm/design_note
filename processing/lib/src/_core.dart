@@ -17,10 +17,24 @@ class Processing extends StatelessWidget {
       );
 }
 
-abstract class Sketch {
-  void setup() {}
+class Sketch {
+  Sketch.simple({
+    Function(Sketch)? setup,
+    Function(Sketch)? draw,
+  })  : _setup = setup,
+        _draw = draw;
 
-  void draw() {}
+  final Function(Sketch)? _setup;
+
+  final Function(Sketch)? _draw;
+
+  void setup() {
+    _setup?.call(this);
+  }
+
+  void draw() {
+    _draw?.call(this);
+  }
 
   late final Canvas canvas;
 

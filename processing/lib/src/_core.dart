@@ -110,6 +110,14 @@ class Sketch {
       ..drawCircle(center, diameter / 2, _strokePaint);
   }
 
+  void ellipse({
+    required Ellipse ellipse,
+  }) {
+    canvas
+      ..drawOval(ellipse.rect, _fillPaint)
+      ..drawOval(ellipse.rect, _strokePaint);
+  }
+
   void square({
     required Square square,
   }) {
@@ -208,6 +216,53 @@ class Square {
           center: center,
           width: extent,
           height: extent,
+        );
+
+  final Rect _rect;
+
+  Rect get rect => _rect;
+}
+
+class Ellipse {
+  Ellipse.fromLTWH({
+    required Offset leftTop,
+    required double width,
+    required double height,
+  }) : _rect = Rect.fromLTWH(
+          leftTop.dx,
+          leftTop.dy,
+          width,
+          height,
+        );
+
+  Ellipse.fromLTRB({
+    required Offset leftTop,
+    required Offset rightBottom,
+  }) : _rect = Rect.fromLTRB(
+          leftTop.dx,
+          leftTop.dy,
+          rightBottom.dx,
+          rightBottom.dy,
+        );
+
+  Ellipse.fromCenter({
+    required Offset center,
+    required double width,
+    required double height,
+  }) : _rect = Rect.fromCenter(
+          center: center,
+          width: width,
+          height: height,
+        );
+
+  Ellipse.fromCenterWithRadius({
+    required Offset center,
+    required double radiusX,
+    required double radiusY,
+  }) : _rect = Rect.fromCenter(
+          center: center,
+          width: radiusX * 2,
+          height: radiusY * 2,
         );
 
   final Rect _rect;

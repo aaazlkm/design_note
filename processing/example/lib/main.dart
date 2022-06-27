@@ -29,9 +29,12 @@ class Page extends StatelessWidget {
             child: Processing(
               sketch: Sketch.simple(
                 draw: (s) {
-                  s.point(
-                    x: 31,
-                    y: 31,
+                  s.ellipse(
+                    ellipse: Ellipse.fromCenterWithRadius(
+                      center: Offset(50, 50),
+                      radiusX: 70,
+                      radiusY: 38,
+                    ),
                   );
                 },
               ),

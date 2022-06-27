@@ -28,9 +28,21 @@ class Sketch {
 
   final Function(Sketch)? _draw;
 
+  late Paint _fillPaint;
+
+  late Paint _strokePaint;
+
   void _doOnSetup() {
     background(color: const Color(0xffC5C5C5));
     setup();
+
+    _fillPaint = Paint()
+      ..color = const Color(0xffffffff)
+      ..style = PaintingStyle.fill;
+    _strokePaint = Paint()
+      ..color = const Color(0xff000000)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.0;
   }
 
   void setup() {
@@ -50,6 +62,111 @@ class Sketch {
   }) {
     final paint = Paint()..color = color;
     canvas.drawRect(Offset.zero & size, paint);
+  }
+
+  void fill({
+    required Color color,
+  }) {
+    _fillPaint.color = color;
+  }
+
+  void noFill() {
+    _fillPaint.color = const Color(0x00000000);
+  }
+
+  void stroke({
+    required Color color,
+  }) {
+    _strokePaint.color = color;
+  }
+
+  void noStroke() {
+    _strokePaint.color = const Color(0x00000000);
+  }
+
+  void point({
+    required double x,
+    required double y,
+  }) {
+    canvas.drawRect(
+      Rect.fromCenter(center: Offset(x, y), width: 1, height: 1),
+      _strokePaint,
+    );
+  }
+
+  void line(
+    Offset p1,
+    Offset p2,
+  ) {
+    canvas.drawLine(p1, p2, _strokePaint);
+  }
+
+  void circle({
+    required Offset center,
+    required double diameter,
+  }) {
+    canvas
+      ..drawCircle(center, diameter / 2, _fillPaint)
+      ..drawCircle(center, diameter / 2, _strokePaint);
+  }
+
+  void square({
+    required Square square,
+  }) {
+    canvas
+      ..drawRect(square.rect, _fillPaint)
+      ..drawRect(square.rect, _strokePaint);
+  }
+
+  void rect({
+    required Rect rect,
+    BorderRadius borderRadius = BorderRadius.zero,
+  }) {
+    final rrect = RRect.fromLTRBAndCorners(
+      rect.left,
+      rect.top,
+      rect.right,
+      rect.bottom,
+      topLeft: borderRadius.topLeft,
+      topRight: borderRadius.topRight,
+      bottomLeft: borderRadius.bottomLeft,
+      bottomRight: borderRadius.bottomRight,
+    );
+    canvas
+      ..drawRRect(rrect, _fillPaint)
+      ..drawRRect(rrect, _strokePaint);
+  }
+
+  void triangle({
+    required Offset p1,
+    required Offset p2,
+    required Offset p3,
+  }) {
+    final path = Path()
+      ..moveTo(p1.dx, p1.dy)
+      ..lineTo(p2.dx, p2.dy)
+      ..lineTo(p3.dx, p3.dy)
+      ..close();
+    canvas
+      ..drawPath(path, _fillPaint)
+      ..drawPath(path, _strokePaint);
+  }
+
+  void quad({
+    required Offset p1,
+    required Offset p2,
+    required Offset p3,
+    required Offset p4,
+  }) {
+    final path = Path()
+      ..moveTo(p1.dx, p1.dy)
+      ..lineTo(p2.dx, p2.dy)
+      ..lineTo(p3.dx, p3.dy)
+      ..lineTo(p4.dx, p4.dy)
+      ..close();
+    canvas
+      ..drawPath(path, _fillPaint)
+      ..drawPath(path, _strokePaint);
   }
 }
 
@@ -71,4 +188,29 @@ class _SketchPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+}
+
+class Square {
+  Square.fromLTE({
+    required Offset leftTop,
+    required double extent,
+  }) : _rect = Rect.fromLTWH(
+          leftTop.dx,
+          leftTop.dy,
+          extent,
+          extent,
+        );
+
+  Square.fromCenter({
+    required Offset center,
+    required double extent,
+  }) : _rect = Rect.fromCenter(
+          center: center,
+          width: extent,
+          height: extent,
+        );
+
+  final Rect _rect;
+
+  Rect get rect => _rect;
 }

@@ -27,7 +27,14 @@ class Page extends StatelessWidget {
           child: SizedBox.fromSize(
             size: const Size.square(100),
             child: Processing(
-              sketch: Sketch.simple(),
+              sketch: Sketch.simple(
+                draw: (s) {
+                  s.point(
+                    x: 31,
+                    y: 31,
+                  );
+                },
+              ),
             ),
           ),
         ),

@@ -118,6 +118,39 @@ class Sketch {
       ..drawOval(ellipse.rect, _strokePaint);
   }
 
+  void arc({
+    required Ellipse ellipse,
+    required double startAngle,
+    required double endAngle,
+    ArcMode arcMode = ArcMode.openStrokePiFill,
+  }) {
+    switch (arcMode) {
+      case ArcMode.openStrokePiFill:
+        canvas
+          ..drawArc(ellipse.rect, startAngle, endAngle - startAngle, true, _fillPaint)
+          ..drawArc(ellipse.rect, startAngle, endAngle - startAngle, false, _strokePaint);
+        break;
+      case ArcMode.open:
+        canvas
+          ..drawArc(ellipse.rect, startAngle, endAngle - startAngle, false, _fillPaint)
+          ..drawArc(ellipse.rect, startAngle, endAngle - startAngle, false, _strokePaint);
+        break;
+      case ArcMode.chord:
+        final chordPath = Path()
+          ..addArc(ellipse.rect, startAngle, endAngle - startAngle)
+          ..close();
+        canvas
+          ..drawArc(ellipse.rect, startAngle, endAngle - startAngle, false, _fillPaint)
+          ..drawPath(chordPath, _strokePaint);
+        break;
+      case ArcMode.pie:
+        canvas
+          ..drawArc(ellipse.rect, startAngle, endAngle - startAngle, true, _fillPaint)
+          ..drawArc(ellipse.rect, startAngle, endAngle - startAngle, true, _strokePaint);
+        break;
+    }
+  }
+
   void square({
     required Square square,
   }) {
@@ -268,4 +301,11 @@ class Ellipse {
   final Rect _rect;
 
   Rect get rect => _rect;
+}
+
+enum ArcMode {
+  openStrokePiFill,
+  chord,
+  open,
+  pie,
 }

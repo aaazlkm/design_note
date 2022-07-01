@@ -71,6 +71,13 @@ class Page extends StatelessWidget {
                       endAngle: pi * 2,
                       arcMode: ArcMode.open,
                     );
+
+                  s.randomSeed(2);
+                  final random = s.random(2);
+                  print("random$random");
+
+                  final ramdoms = s.random(2, 45);
+                  print("random$ramdoms");
                 },
               ),
             ),

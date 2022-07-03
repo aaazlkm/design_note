@@ -30,7 +30,12 @@ class Page extends StatelessWidget {
             size: const Size.square(100),
             child: Processing(
               sketch: Sketch.simple(
+                setup: (s) {
+                  print('setup');
+                },
                 draw: (s) {
+                  print('draw');
+
                   s
                     ..arc(
                       ellipse: Ellipse.fromCenter(

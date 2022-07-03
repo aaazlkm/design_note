@@ -1,8 +1,9 @@
 import 'dart:math';
 
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 
-class Processing extends StatelessWidget {
+class Processing extends StatefulWidget {
   const Processing({
     required this.sketch,
     Key? key,
@@ -11,10 +12,33 @@ class Processing extends StatelessWidget {
   final Sketch sketch;
 
   @override
+  State<Processing> createState() => _ProcessingState();
+}
+
+class _ProcessingState extends State<Processing> with SingleTickerProviderStateMixin {
+  late final Ticker ticker;
+
+  void _handleTicker(Duration elapsed) {
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    ticker = createTicker(_handleTicker)..start();
+  }
+
+  @override
+  void dispose() {
+    ticker.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) => CustomPaint(
         size: Size.infinite,
         painter: _SketchPainter(
-          sketch: sketch,
+          sketch: widget.sketch,
         ),
       );
 }
@@ -26,6 +50,10 @@ class Sketch {
   })  : _setup = setup,
         _draw = draw;
 
+  late final Canvas _canvas;
+
+  late final Size _size;
+
   final Function(Sketch)? _setup;
 
   final Function(Sketch)? _draw;
@@ -36,7 +64,16 @@ class Sketch {
 
   Random _random = Random();
 
-  void _doOnSetup() {
+  bool hasSetup = false;
+
+  void _doOnSetup(Canvas canvas, Size size) {
+    if (hasSetup) {
+      return;
+    }
+    hasSetup = true;
+    _canvas = canvas;
+    _size = size;
+
     background(color: const Color(0xffC5C5C5));
     setup();
 
@@ -57,15 +94,11 @@ class Sketch {
     _draw?.call(this);
   }
 
-  late final Canvas canvas;
-
-  late final Size size;
-
   void background({
     required Color color,
   }) {
     final paint = Paint()..color = color;
-    canvas.drawRect(Offset.zero & size, paint);
+    _canvas.drawRect(Offset.zero & _size, paint);
   }
 
   void fill({
@@ -92,7 +125,7 @@ class Sketch {
     required double x,
     required double y,
   }) {
-    canvas.drawRect(
+    _canvas.drawRect(
       Rect.fromCenter(center: Offset(x, y), width: 1, height: 1),
       _strokePaint,
     );
@@ -102,14 +135,14 @@ class Sketch {
     Offset p1,
     Offset p2,
   ) {
-    canvas.drawLine(p1, p2, _strokePaint);
+    _canvas.drawLine(p1, p2, _strokePaint);
   }
 
   void circle({
     required Offset center,
     required double diameter,
   }) {
-    canvas
+    _canvas
       ..drawCircle(center, diameter / 2, _fillPaint)
       ..drawCircle(center, diameter / 2, _strokePaint);
   }
@@ -117,7 +150,7 @@ class Sketch {
   void ellipse({
     required Ellipse ellipse,
   }) {
-    canvas
+    _canvas
       ..drawOval(ellipse.rect, _fillPaint)
       ..drawOval(ellipse.rect, _strokePaint);
   }
@@ -130,12 +163,12 @@ class Sketch {
   }) {
     switch (arcMode) {
       case ArcMode.openStrokePiFill:
-        canvas
+        _canvas
           ..drawArc(ellipse.rect, startAngle, endAngle - startAngle, true, _fillPaint)
           ..drawArc(ellipse.rect, startAngle, endAngle - startAngle, false, _strokePaint);
         break;
       case ArcMode.open:
-        canvas
+        _canvas
           ..drawArc(ellipse.rect, startAngle, endAngle - startAngle, false, _fillPaint)
           ..drawArc(ellipse.rect, startAngle, endAngle - startAngle, false, _strokePaint);
         break;
@@ -143,12 +176,12 @@ class Sketch {
         final chordPath = Path()
           ..addArc(ellipse.rect, startAngle, endAngle - startAngle)
           ..close();
-        canvas
+        _canvas
           ..drawArc(ellipse.rect, startAngle, endAngle - startAngle, false, _fillPaint)
           ..drawPath(chordPath, _strokePaint);
         break;
       case ArcMode.pie:
-        canvas
+        _canvas
           ..drawArc(ellipse.rect, startAngle, endAngle - startAngle, true, _fillPaint)
           ..drawArc(ellipse.rect, startAngle, endAngle - startAngle, true, _strokePaint);
         break;
@@ -158,7 +191,7 @@ class Sketch {
   void square({
     required Square square,
   }) {
-    canvas
+    _canvas
       ..drawRect(square.rect, _fillPaint)
       ..drawRect(square.rect, _strokePaint);
   }
@@ -177,7 +210,7 @@ class Sketch {
       bottomLeft: borderRadius.bottomLeft,
       bottomRight: borderRadius.bottomRight,
     );
-    canvas
+    _canvas
       ..drawRRect(rrect, _fillPaint)
       ..drawRRect(rrect, _strokePaint);
   }
@@ -192,7 +225,7 @@ class Sketch {
       ..lineTo(p2.dx, p2.dy)
       ..lineTo(p3.dx, p3.dy)
       ..close();
-    canvas
+    _canvas
       ..drawPath(path, _fillPaint)
       ..drawPath(path, _strokePaint);
   }
@@ -209,7 +242,7 @@ class Sketch {
       ..lineTo(p3.dx, p3.dy)
       ..lineTo(p4.dx, p4.dy)
       ..close();
-    canvas
+    _canvas
       ..drawPath(path, _fillPaint)
       ..drawPath(path, _strokePaint);
   }
@@ -240,9 +273,7 @@ class _SketchPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     sketch
-      ..canvas = canvas
-      ..size = size
-      .._doOnSetup()
+      .._doOnSetup(canvas, size)
       ..draw();
   }
 

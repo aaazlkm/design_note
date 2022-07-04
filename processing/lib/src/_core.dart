@@ -20,12 +20,23 @@ class _ProcessingState extends State<Processing> with SingleTickerProviderStateM
 
   void _handleTicker(Duration elapsed) {
     setState(() {});
+    widget.sketch._elapsedTime = elapsed;
   }
 
   @override
   void initState() {
     super.initState();
     ticker = createTicker(_handleTicker)..start();
+  }
+
+  @override
+  void didUpdateWidget(covariant Processing oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget != oldWidget) {
+      ticker
+        ..stop()
+        ..start();
+    }
   }
 
   @override
@@ -50,9 +61,9 @@ class Sketch {
   })  : _setup = setup,
         _draw = draw;
 
-  late final Canvas _canvas;
+  late Canvas _canvas;
 
-  late final Size _size;
+  late Size _size;
 
   final Function(Sketch)? _setup;
 
@@ -62,19 +73,36 @@ class Sketch {
 
   late Paint _strokePaint;
 
+  Color _backgroundColor = const Color(0xffC5C5C5);
+
   Random _random = Random();
 
-  bool hasSetup = false;
+  bool _hasSetup = false;
 
-  void _doOnSetup(Canvas canvas, Size size) {
-    if (hasSetup) {
+  Duration _elapsedTime = Duration.zero;
+
+  int _frameCount = 0;
+
+  int get frameCount => _frameCount;
+
+  int _actualFrameRate = 10;
+
+  int get frameRate => _actualFrameRate;
+
+  Duration desiredFrameTimeInMilliseconds = Duration(milliseconds: (1000 / 60).floor());
+
+  set frameRate(int value) {
+    desiredFrameTimeInMilliseconds = Duration(milliseconds: (1000 / value).floor());
+  }
+
+  Duration? _lastDrawTime;
+
+  void _doOnSetup() {
+    if (_hasSetup) {
       return;
     }
-    hasSetup = true;
-    _canvas = canvas;
-    _size = size;
+    _hasSetup = true;
 
-    background(color: const Color(0xffC5C5C5));
     setup();
 
     _fillPaint = Paint()
@@ -90,6 +118,23 @@ class Sketch {
     _setup?.call(this);
   }
 
+  void _doOnDraw() {
+    background(color: _backgroundColor);
+    final lastDrawTime = _lastDrawTime;
+    if (lastDrawTime != null) {
+      if (_elapsedTime - lastDrawTime < desiredFrameTimeInMilliseconds) {
+        return;
+      }
+    }
+
+    draw();
+
+    _frameCount++;
+    _lastDrawTime = _elapsedTime;
+    final secondsFraction = _elapsedTime.inMilliseconds / 1000;
+    _actualFrameRate = secondsFraction > 0 ? (frameCount / secondsFraction).round() : _actualFrameRate;
+  }
+
   void draw() {
     _draw?.call(this);
   }
@@ -98,6 +143,7 @@ class Sketch {
     required Color color,
   }) {
     final paint = Paint()..color = color;
+    _backgroundColor = color;
     _canvas.drawRect(Offset.zero & _size, paint);
   }
 
@@ -273,8 +319,10 @@ class _SketchPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     sketch
-      .._doOnSetup(canvas, size)
-      ..draw();
+      .._canvas = canvas
+      .._size = size
+      .._doOnSetup()
+      .._doOnDraw();
   }
 
   @override

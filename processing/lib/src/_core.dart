@@ -97,6 +97,10 @@ class Sketch {
 
   Duration? _lastDrawTime;
 
+  int get width => _size.width.toInt();
+
+  int get height => _size.height.toInt();;
+
   void _doOnSetup() {
     if (_hasSetup) {
       return;

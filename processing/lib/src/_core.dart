@@ -47,7 +47,7 @@ class _ProcessingState extends State<Processing> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) => CustomPaint(
-        size: Size.infinite,
+        size: Size(widget.sketch._desiredWidth, widget.sketch._desiredHeight),
         painter: _SketchPainter(
           sketch: widget.sketch,
         ),
@@ -97,9 +97,13 @@ class Sketch {
 
   Duration? _lastDrawTime;
 
+  double _desiredWidth = 100;
+
+  double _desiredHeight = 100;
+
   int get width => _size.width.toInt();
 
-  int get height => _size.height.toInt();;
+  int get height => _size.height.toInt();
 
   void _doOnSetup() {
     if (_hasSetup) {
@@ -141,6 +145,14 @@ class Sketch {
 
   void draw() {
     _draw?.call(this);
+  }
+
+  void size({
+    required double width,
+    required double height,
+  }) {
+    _desiredWidth = width;
+    _desiredHeight = height;
   }
 
   void background({

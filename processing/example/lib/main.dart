@@ -31,73 +31,21 @@ class _PageState extends State<Page> {
   @override
   Widget build(BuildContext context) => Scaffold(
         body: Center(
-          child: SizedBox.fromSize(
-            size: const Size.square(100),
-            child: Processing(
-              sketch: Sketch.simple(
-                setup: (s) {
-                  print('setup');
-                  s.frameRate = 60;
-                },
-                draw: (s) {
-                  print('draw ${s.frameRate}');
+          child: Processing(
+            sketch: Sketch.simple(
+              setup: (s) {
+                print('setup');
+                s.size(width: 200, height: 200);
+              },
+              draw: (s) {
+                print('draw ${s.frameRate}');
 
-                  if (s.frameCount % 15 == 0) {
-                    final x = s.random(0, 100);
-                    final y = s.random(0, 100);
-                    _circularOffset = Offset(x, y);
-                  }
-                  s.circle(center: _circularOffset, diameter: 10);
-
-                  // s
-                  //   ..arc(
-                  //     ellipse: Ellipse.fromCenter(
-                  //       center: Offset(50, 55),
-                  //       width: 50,
-                  //       height: 50,
-                  //     ),
-                  //     startAngle: 0,
-                  //     endAngle: pi / 2,
-                  //   )
-                  //   ..arc(
-                  //     ellipse: Ellipse.fromCenter(
-                  //       center: Offset(50, 55),
-                  //       width: 60,
-                  //       height: 60,
-                  //     ),
-                  //     startAngle: pi / 2,
-                  //     endAngle: pi,
-                  //     arcMode: ArcMode.pie,
-                  //   )
-                  //   ..arc(
-                  //     ellipse: Ellipse.fromCenter(
-                  //       center: Offset(50, 55),
-                  //       width: 70,
-                  //       height: 70,
-                  //     ),
-                  //     startAngle: pi,
-                  //     endAngle: pi + pi / 4,
-                  //     arcMode: ArcMode.chord,
-                  //   )
-                  //   ..arc(
-                  //     ellipse: Ellipse.fromCenter(
-                  //       center: Offset(50, 55),
-                  //       width: 80,
-                  //       height: 80,
-                  //     ),
-                  //     startAngle: pi + pi / 4,
-                  //     endAngle: pi * 2,
-                  //     arcMode: ArcMode.open,
-                  //   );
-                  //
-                  // s.randomSeed(2);
-                  // final random = s.random(2);
-                  // print("random$random");
-                  //
-                  // final ramdoms = s.random(2, 45);
-                  // print("random$ramdoms");
-                },
-              ),
+                s
+                  ..noStroke()
+                  ..background(color: Colors.black)
+                  ..rect(rect: Rect.fromLTWH(40, 0, 20, s.height.toDouble()))
+                  ..rect(rect: Rect.fromLTWH(60, 0, 20, s.height / 2));
+              },
             ),
           ),
         ),

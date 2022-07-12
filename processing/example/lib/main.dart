@@ -28,12 +28,12 @@ class Page extends StatefulWidget {
 }
 
 class _PageState extends State<Page> {
-  final stars = <Star>[];
+  final droplets = <Droplet>[];
 
   @override
   void reassemble() {
     super.reassemble();
-    stars.clear();
+    droplets.clear();
   }
 
   @override
@@ -51,26 +51,21 @@ class _PageState extends State<Page> {
                   );
 
                 for (var i = 0; i < 500; i++) {
-                  stars.add(
-                    Star(
-                      x: width / 2 + s.random(-width.toInt(), width.toInt()),
-                      y: s.random(-height.toInt(), height.toInt()),
-                      z: s.random(width.toInt()),
+                  droplets.add(
+                    Droplet(
+                      x: s.random(width.toInt()),
+                      y: s.random(-height.toInt(), 0),
+                      z: s.random(0, 1),
+                      length: 15,
                     ),
                   );
                 }
               },
               draw: (s) {
-                for (final star in stars) {
-                  star.update(s);
-                }
-
-                for (final star in stars) {
-                  star.paintStroke(s);
-                }
-
-                for (final star in stars) {
-                  star.paintStar(s);
+                for (final star in droplets) {
+                  star
+                    ..fall(s)
+                    ..paint(s);
                 }
               },
             ),
@@ -79,69 +74,31 @@ class _PageState extends State<Page> {
       );
 }
 
-class Star {
-  Star({
+class Droplet {
+  Droplet({
     required this.x,
     required this.y,
     required this.z,
-  }) : strokeStartZ = 0 {
-    strokeStartZ = z;
-  }
+    required this.length,
+  });
 
   double x;
   double y;
   double z;
-  double strokeStartZ;
+  double length;
 
-  void update(Sketch s) {
-    z -= 10;
-    strokeStartZ -= 5;
-
-    if (z < 0) {
-      x = s.random(-s.width.toInt(), s.width.toInt());
-      y = s.random(-s.height.toInt(), s.height.toInt());
-      z = s.random(s.width.toInt());
-      strokeStartZ = z;
+  void fall(Sketch s) {
+    y += lerpDouble(6, 10, z)!;
+    if (y + length > s.height) {
+      y = 0;
     }
   }
 
-  void paintStroke(Sketch s) {
-    final center = Offset(
-      s.width / 2,
-      s.height / 2,
-    );
-    final perspectiveOffsetStart = Offset(
-      lerpDouble(0, s.width, x / strokeStartZ)!,
-      lerpDouble(0, s.height, y / strokeStartZ)!,
-    );
-    final perspectiveOffset = Offset(
-      lerpDouble(0, s.width, x / z)!,
-      lerpDouble(0, s.height, y / z)!,
-    );
+  void paint(Sketch s) {
+    final colorOpacity = lerpDouble(0.4, 1, z)!;
+    final perspectiveLength = lerpDouble(length * 0.2, length, z)!;
     s
-      ..stroke(color: Colors.white.withOpacity(0.3))
-      ..line(perspectiveOffsetStart + center, perspectiveOffset + center);
-  }
-
-  void paintStar(Sketch s) {
-    final center = Offset(
-      s.width / 2,
-      s.height / 2,
-    );
-    final perspectiveOffset = Offset(
-      lerpDouble(0, s.width, x / z)!,
-      lerpDouble(0, s.height, y / z)!,
-    );
-    final diameter = lerpDouble(12, 0, z / s.width)!;
-
-    s
-      ..noStroke()
-      ..fill(
-        color: Colors.white,
-      )
-      ..circle(
-        center: center + perspectiveOffset,
-        diameter: diameter,
-      );
+      ..stroke(color: Colors.white.withOpacity(colorOpacity))
+      ..line(Offset(x, y), Offset(x, y + perspectiveLength));
   }
 }

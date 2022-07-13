@@ -42,31 +42,18 @@ class _PageState extends State<Page> {
           child: Processing(
             sketch: Sketch.simple(
               setup: (s) {
-                const width = 800.0;
-                const height = 800.0;
+                const width = 100.0;
+                const height = 100.0;
                 s
                   ..size(width: width, height: height)
                   ..background(
                     color: Colors.black,
                   );
-
-                for (var i = 0; i < 500; i++) {
-                  droplets.add(
-                    Droplet(
-                      x: s.random(width.toInt()),
-                      y: s.random(-height.toInt(), 0),
-                      z: s.random(0, 1),
-                      length: 15,
-                    ),
-                  );
-                }
               },
               draw: (s) {
-                for (final star in droplets) {
-                  star
-                    ..fall(s)
-                    ..paint(s);
-                }
+                s
+                  ..translate(x: 20, y: 40)
+                  ..rect(rect: Rect.fromCenter(center: Offset(10, 10), width: 10, height: 10));
               },
             ),
           ),

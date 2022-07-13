@@ -155,6 +155,13 @@ class Sketch {
     _desiredHeight = height;
   }
 
+  void translate({
+    required double x,
+    required double y,
+  }) {
+    _canvas.translate(x, y);
+  }
+
   void background({
     required Color color,
   }) {

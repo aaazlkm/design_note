@@ -27,15 +27,23 @@ class _ProcessingState extends State<Processing> with SingleTickerProviderStateM
   void initState() {
     super.initState();
     ticker = createTicker(_handleTicker)..start();
+    widget.sketch._loop = _loop;
+    widget.sketch._noLoop = _noLoop;
   }
 
   @override
   void didUpdateWidget(covariant Processing oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget != oldWidget) {
-      ticker
-        ..stop()
-        ..start();
+      oldWidget.sketch._loop = null;
+      oldWidget.sketch._noLoop = null;
+      widget.sketch._loop = _loop;
+      widget.sketch._noLoop = _noLoop;
+
+      _noLoop();
+      if (widget.sketch.isLooping) {
+        _loop();
+      }
     }
   }
 
@@ -43,6 +51,14 @@ class _ProcessingState extends State<Processing> with SingleTickerProviderStateM
   void dispose() {
     ticker.dispose();
     super.dispose();
+  }
+
+  void _loop() {
+    ticker.start();
+  }
+
+  void _noLoop() {
+    ticker.stop();
   }
 
   @override
@@ -104,6 +120,22 @@ class Sketch {
   int get width => _size.width.toInt();
 
   int get height => _size.height.toInt();
+
+  bool isLooping = false;
+
+  VoidCallback? _loop;
+
+  VoidCallback? _noLoop;
+
+  void loop() {
+    isLooping = true;
+    _loop?.call();
+  }
+
+  void noLoop() {
+    isLooping = false;
+    _noLoop?.call();
+  }
 
   void _doOnSetup() {
     if (_hasSetup) {

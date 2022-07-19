@@ -6,10 +6,12 @@ import 'package:flutter/widgets.dart';
 class Processing extends StatefulWidget {
   const Processing({
     required this.sketch,
+    this.clipBehavior = Clip.none,
     Key? key,
   }) : super(key: key);
 
   final Sketch sketch;
+  final Clip clipBehavior;
 
   @override
   State<Processing> createState() => _ProcessingState();
@@ -37,8 +39,10 @@ class _ProcessingState extends State<Processing> with SingleTickerProviderStateM
     if (widget != oldWidget) {
       oldWidget.sketch._loop = null;
       oldWidget.sketch._noLoop = null;
+      widget.sketch._onSizeChanged = null;
       widget.sketch._loop = _loop;
       widget.sketch._noLoop = _noLoop;
+      widget.sketch._onSizeChanged = _onSizeChanged;
 
       _noLoop();
       if (widget.sketch.isLooping) {
@@ -61,12 +65,16 @@ class _ProcessingState extends State<Processing> with SingleTickerProviderStateM
     ticker.stop();
   }
 
+  void _onSizeChanged() {
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      setState(() {});
+    });
+  }
+
   @override
   Widget build(BuildContext context) => CustomPaint(
         size: Size(widget.sketch._desiredWidth, widget.sketch._desiredHeight),
-        painter: _SketchPainter(
-          sketch: widget.sketch,
-        ),
+        painter: _SketchPainter(sketch: widget.sketch, clipBehavior: widget.clipBehavior),
       );
 }
 
@@ -127,6 +135,8 @@ class Sketch {
 
   VoidCallback? _noLoop;
 
+  VoidCallback? _onSizeChanged;
+
   void loop() {
     isLooping = true;
     _loop?.call();
@@ -185,6 +195,7 @@ class Sketch {
   }) {
     _desiredWidth = width;
     _desiredHeight = height;
+    _onSizeChanged?.call();
   }
 
   void translate({
@@ -367,12 +378,21 @@ class Sketch {
 class _SketchPainter extends CustomPainter {
   _SketchPainter({
     required this.sketch,
+    required this.clipBehavior,
   });
 
   final Sketch sketch;
+  final Clip clipBehavior;
 
   @override
   void paint(Canvas canvas, Size size) {
+    if (clipBehavior != Clip.none) {
+      canvas.clipRect(Offset.zero & size,
+          doAntiAlias: [Clip.antiAlias, Clip.antiAliasWithSaveLayer].contains(clipBehavior));
+
+      // TODO figure out to how to save layer for anti-aliasing-with-save-layer
+    }
+
     sketch
       .._canvas = canvas
       .._size = size

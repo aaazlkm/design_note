@@ -129,7 +129,7 @@ class Sketch {
 
   int get height => _size.height.toInt();
 
-  bool isLooping = false;
+  bool isLooping = true;
 
   VoidCallback? _loop;
 
@@ -231,6 +231,12 @@ class Sketch {
 
   void noStroke() {
     _strokePaint.color = const Color(0x00000000);
+  }
+
+  void strokeWeight({
+    required double weight,
+  }) {
+    _strokePaint.strokeWidth = weight;
   }
 
   void point({

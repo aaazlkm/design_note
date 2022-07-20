@@ -44,16 +44,16 @@ class _PageState extends State<Page> {
               setup: (s) {
                 const width = 100.0;
                 const height = 100.0;
-                s
-                  ..size(width: width, height: height)
-                  ..background(
-                    color: Colors.black,
-                  );
+                s..size(width: width, height: height);
               },
               draw: (s) {
                 s
-                  ..translate(x: 20, y: 40)
-                  ..rect(rect: Rect.fromCenter(center: Offset(10, 10), width: 10, height: 10));
+                  ..strokeWeight(weight: 1)
+                  ..line(Offset(20, 30), Offset(20, 80))
+                  ..strokeWeight(weight: 4)
+                  ..line(Offset(40, 30), Offset(40, 80))
+                  ..strokeWeight(weight: 10)
+                  ..line(Offset(70, 30), Offset(70, 80));
               },
             ),
           ),

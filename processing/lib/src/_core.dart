@@ -125,9 +125,9 @@ class Sketch {
 
   double _desiredHeight = 100;
 
-  int get width => _size.width.toInt();
+  int get width => _desiredWidth.toInt();
 
-  int get height => _size.height.toInt();
+  int get height => _desiredHeight.toInt();
 
   bool isLooping = true;
 

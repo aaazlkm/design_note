@@ -133,7 +133,7 @@ class _FilterChipState extends State<FilterChip> {
                           ),
                         ),
                         TweenAnimationBuilder<double>(
-                          tween: Tween(begin: 0, end: isSelected ? 14 : 0),
+                          tween: Tween(begin: 0, end: isSelected ? circleSize : 0),
                           duration: widget.duration,
                           curve: Curves.easeInOut,
                           builder: (context, value, chid) => Icon(

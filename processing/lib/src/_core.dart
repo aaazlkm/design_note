@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 class Processing extends StatefulWidget {
@@ -71,10 +72,22 @@ class _ProcessingState extends State<Processing> with SingleTickerProviderStateM
     });
   }
 
+  void _onKey(RawKeyEvent event) {
+    if (event is RawKeyDownEvent) {
+      widget.sketch._doOnKeyPressed(event.logicalKey);
+    } else if (event is RawKeyUpEvent) {
+      widget.sketch._doOnKeyReleased(event.logicalKey);
+    }
+  }
+
   @override
-  Widget build(BuildContext context) => CustomPaint(
-        size: Size(widget.sketch._desiredWidth, widget.sketch._desiredHeight),
-        painter: _SketchPainter(sketch: widget.sketch, clipBehavior: widget.clipBehavior),
+  Widget build(BuildContext context) => RawKeyboardListener(
+        focusNode: FocusNode()..requestFocus(),
+        onKey: _onKey,
+        child: CustomPaint(
+          size: Size(widget.sketch._desiredWidth, widget.sketch._desiredHeight),
+          painter: _SketchPainter(sketch: widget.sketch, clipBehavior: widget.clipBehavior),
+        ),
       );
 }
 
@@ -82,8 +95,12 @@ class Sketch {
   Sketch.simple({
     Function(Sketch)? setup,
     Function(Sketch)? draw,
+    Function(Sketch)? onKeyPressed,
+    Function(Sketch)? onKeyReleased,
   })  : _setup = setup,
-        _draw = draw;
+        _draw = draw,
+        _onKeyPressed = onKeyPressed,
+        _onKeyReleased = onKeyReleased;
 
   late Canvas _canvas;
 
@@ -92,6 +109,10 @@ class Sketch {
   final Function(Sketch)? _setup;
 
   final Function(Sketch)? _draw;
+
+  final Function(Sketch)? _onKeyPressed;
+
+  final Function(Sketch)? _onKeyReleased;
 
   late Paint _fillPaint;
 
@@ -187,6 +208,23 @@ class Sketch {
 
   void draw() {
     _draw?.call(this);
+  }
+
+  LogicalKeyboardKey? key;
+  bool isKeyPressed = false;
+  Set<LogicalKeyboardKey> pressedKeys = {};
+
+  void _doOnKeyPressed(LogicalKeyboardKey key) {
+    this.key = key;
+    _onKeyPressed?.call(this);
+    pressedKeys.add(key);
+    isKeyPressed = true;
+  }
+
+  void _doOnKeyReleased(LogicalKeyboardKey key) {
+    _onKeyReleased?.call(this);
+    pressedKeys.remove(key);
+    isKeyPressed = pressedKeys.isNotEmpty;
   }
 
   void size({

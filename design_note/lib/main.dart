@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'filterchip/filter_chip_page.dart';
+import 'circleColorToRectanglePage/circle_color_to_rectangle_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: const FilterChipPage(),
+        home: const CircleColorToRectanglePage(),
       );
 }
 

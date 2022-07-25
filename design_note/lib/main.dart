@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'circleColorToRectanglePage/circle_color_to_rectangle_page.dart';
+import 'iosLoading/ios_loading_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: const CircleColorToRectanglePage(),
+        home: const IosLoadingPage(),
       );
 }
 

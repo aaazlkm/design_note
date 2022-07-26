@@ -37,7 +37,7 @@ class IosLoadingPageState extends State<IosLoadingPage> with SingleTickerProvide
           child: AnimatedBuilder(
             animation: loadingAnimationController,
             builder: (context, child) => CustomPaint(
-              size: const Size(70, 70),
+              size: const Size(60, 60),
               painter: IosLoadingPainter(
                 progress: loadingAnimationController.value,
               ),
@@ -50,9 +50,9 @@ class IosLoadingPageState extends State<IosLoadingPage> with SingleTickerProvide
 class IosLoadingPainter extends CustomPainter {
   IosLoadingPainter({
     required this.progress,
-    this.barCount = 8,
-    this.barWidth = 7,
-    this.innerRadiusPercent = 0.5,
+    this.barCount = 12,
+    this.barWidth = 6,
+    this.innerRadiusPercent = 0.65,
     this.loadingColor = Colors.grey,
   });
 
@@ -74,7 +74,7 @@ class IosLoadingPainter extends CustomPainter {
     final center = size.center(Offset.zero);
 
     const offesetRadians = pi / 8;
-    final mostHightBarIndex = (progress * barCount).floor();
+    final mostHighlightBarIndex = (progress * barCount).floor();
     for (var i = 0; i < barCount; i++) {
       final radians = (2 * pi * i / barCount) + offesetRadians;
       final start = center +
@@ -87,9 +87,11 @@ class IosLoadingPainter extends CustomPainter {
             cos(radians) * outerRadius,
             sin(radians) * outerRadius,
           );
-      final distanceFromMostToI = ((mostHightBarIndex - i) + barCount) % barCount;
+      final distanceFromHighlightToI = ((mostHighlightBarIndex - i) + barCount) % barCount;
       loadingPaint.color = loadingColor.withOpacity(
-        Tween<double>(begin: 0.3, end: 1).transform(distanceFromMostToI / barCount),
+        Tween<double>(begin: 0.3, end: 1)
+            .chain(CurveTween(curve: Curves.easeInCubic))
+            .transform(distanceFromHighlightToI / barCount),
       );
       canvas.drawLine(start, end, loadingPaint);
     }

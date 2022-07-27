@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'iosLoading/ios_loading_page.dart';
+import 'airbnbButton/airbnb_button_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: const IosLoadingPage(),
+        home: const AirbnbButtonPage(),
       );
 }
 

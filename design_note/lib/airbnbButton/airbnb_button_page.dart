@@ -27,10 +27,10 @@ class AirbnbButton extends StatefulWidget {
   State<AirbnbButton> createState() => _AirbnbButtonState();
 }
 
-class _AirbnbButtonState extends State<AirbnbButton> with SingleTickerProviderStateMixin {
+class _AirbnbButtonState extends State<AirbnbButton> with TickerProviderStateMixin {
   Alignment center = Alignment.center;
 
-  num get baseStop => animationController
+  num get baseStop => buttonScaleAnimationController
       .drive(
         CurveTween(
           curve: const Interval(0, 1, curve: Curves.linear),
@@ -41,17 +41,21 @@ class _AirbnbButtonState extends State<AirbnbButton> with SingleTickerProviderSt
       )
       .value;
 
-  late final AnimationController animationController;
+  late final AnimationController buttonScaleAnimationController;
+
+  late final AnimationController gradientAnimationController;
 
   @override
   void initState() {
     super.initState();
-    animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 100));
+    buttonScaleAnimationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 100));
+    gradientAnimationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 500));
   }
 
   @override
   void dispose() {
-    animationController.dispose();
+    buttonScaleAnimationController.dispose();
+    gradientAnimationController.dispose();
     super.dispose();
   }
 
@@ -59,11 +63,13 @@ class _AirbnbButtonState extends State<AirbnbButton> with SingleTickerProviderSt
   Widget build(BuildContext context) => GestureDetector(
         onTapDown: (details) {
           print("onTapDown");
-          animationController.forward();
+          buttonScaleAnimationController.forward();
+          gradientAnimationController.forward();
         },
         onTapUp: (details) {
           print("onTapUp");
-          animationController.reverse();
+          buttonScaleAnimationController.reverse();
+          gradientAnimationController.reverse();
         },
         onPanDown: (details) {
           print("onPanDown");
@@ -102,13 +108,14 @@ class _AirbnbButtonState extends State<AirbnbButton> with SingleTickerProviderSt
         },
         onPanEnd: (details) {
           print("onPanEnd");
-          animationController.reverse();
+          buttonScaleAnimationController.reverse();
+          gradientAnimationController.reverse();
         },
         onPanCancel: () {
           print("onPanCancel");
         },
         child: ScaleTransition(
-          scale: animationController
+          scale: buttonScaleAnimationController
               .drive(
                 CurveTween(
                   curve: const Interval(0, 1, curve: Curves.easeInOut),
@@ -118,7 +125,7 @@ class _AirbnbButtonState extends State<AirbnbButton> with SingleTickerProviderSt
                 Tween(begin: 1, end: 0.95),
               ),
           child: AnimatedBuilder(
-            animation: animationController,
+            animation: buttonScaleAnimationController,
             builder: (context, child) => ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: Stack(
@@ -129,7 +136,7 @@ class _AirbnbButtonState extends State<AirbnbButton> with SingleTickerProviderSt
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          Colors.pink.shade400,
+                          Colors.pink.shade300,
                           Colors.pink.shade500,
                           Colors.pink.shade600,
                         ],
@@ -154,16 +161,28 @@ class _AirbnbButtonState extends State<AirbnbButton> with SingleTickerProviderSt
                   Positioned.fill(
                     child: Align(
                       alignment: center,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(50),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.yellow.withOpacity(0.5),
-                              blurRadius: 1,
-                              spreadRadius: 1,
+                      child: FadeTransition(
+                        opacity: gradientAnimationController.drive(
+                          Tween(begin: 0, end: 1),
+                        ),
+                        child: Transform.scale(
+                          scale: 40,
+                          child: Container(
+                            height: 10,
+                            width: 10,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(50),
+                              gradient: RadialGradient(
+                                colors: [
+                                  Colors.orange.shade500.withOpacity(0.2),
+                                  Colors.orange.shade500.withOpacity(0.2),
+                                  Colors.orange.shade400.withOpacity(0.1),
+                                  Colors.transparent,
+                                  Colors.transparent,
+                                ],
+                              ),
                             ),
-                          ],
+                          ),
                         ),
                       ),
                     ),

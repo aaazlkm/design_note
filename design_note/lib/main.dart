@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'airbnbButton/airbnb_button_page.dart';
+import 'chip/MaterialDesignChipPage/material_design_chip_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: const AirbnbButtonPage(),
+        home: const MaterialDesignChipPage(),
       );
 }
 

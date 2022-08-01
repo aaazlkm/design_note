@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'chip/MaterialDesignChipPage/material_design_chip_page.dart';
+import 'airbnb/loading/airbnb_loading_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: const MaterialDesignChipPage(),
+        home: const AirbnbLoadingPage(),
       );
 }
 

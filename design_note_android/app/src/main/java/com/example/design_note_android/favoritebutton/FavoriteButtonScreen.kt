@@ -26,7 +26,6 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import com.example.design_note_android.R
@@ -58,13 +57,13 @@ fun FavoriteButtonScreen() {
                 content = {
                     if (favorited.value) {
                         Icon(
-                            painterFavorite(),
+                            painterResource(id = R.drawable.ic_baseline_favorite_24),
                             "favorite",
                             tint = Color.Red
                         )
                     } else {
                         Icon(
-                            painterFavoriteBorder(),
+                            painterResource(id = R.drawable.ic_baseline_favorite_border_24),
                             "favorite"
                         )
                     }
@@ -77,86 +76,70 @@ fun FavoriteButtonScreen() {
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun PreviewFavoriteButtonScreen() {
-    FavoriteButtonScreen()
+fun FavoriteAnimation(
+    visible: Boolean,
+) {
+    val transitionState = remember {
+        MutableTransitionState(visible)
+    }
+    val targetChanged = transitionState.targetState != visible
+    transitionState.targetState = visible
+    val transition = updateTransition(targetState = transitionState, label = "")
+    val animatedFraction by transition.animateFloat(
+        transitionSpec = {
+            tween(
+                durationMillis = if (visible) 400 else 0,
+                easing = LinearEasing,
+            )
+        },
+        label = "",
+    ) {
+        if (it.targetState) 1f else 0f
+    }
+
+    val hearts = remember { List(10) { Heart() } }
+    hearts.forEach { heart ->
+        heart.reset()
+    }
+    FavoriteAnimation(
+        hearts = hearts,
+        fraction = animatedFraction,
+    )
 }
 
-
-private const val HEART_COUNT = 10
 private val moveInterpolator = FastOutSlowInEasing
 private val alphaInterpolator = FastOutLinearInEasing
 private val scaleInterpolator = LinearOutSlowInEasing
 
 @Composable
-fun painterFavorite() = painterResource(R.drawable.ic_baseline_favorite_24)
-
-@Composable
-fun painterFavoriteBorder() = painterResource(R.drawable.ic_baseline_favorite_border_24)
-
-@Composable
 fun FavoriteAnimation(
-    visible: Boolean,
-    modifier: Modifier = Modifier,
-) {
-    val transitionState = remember { MutableTransitionState(visible) }
-    val targetChanged = transitionState.targetState != visible
-    transitionState.targetState = visible
-    val transition = updateTransition(transitionState)
-    val animatedFraction by transition.animateFloat(
-        transitionSpec = {
-            tween(
-                durationMillis = if (visible) 400 else 0,
-                easing = LinearEasing
-            )
-        }
-    ) { if (it) 1f else 0f }
-
-    // workaround: reduce drawing count and block ugly blink when other items are toggled.
-    if (visible.not() || animatedFraction >= 1f) {
-        return
-    }
-
-    val hearts = remember { List(HEART_COUNT) { Heart() } }
-    if (targetChanged) {
-        hearts.forEach { heart ->
-            heart.reset()
-        }
-    }
-    FavoriteAnimationInternal(hearts, animatedFraction, modifier)
-}
-
-@Composable
-private fun FavoriteAnimationInternal(
     hearts: List<Heart>,
     fraction: Float,
-    modifier: Modifier = Modifier,
 ) {
     val moveProgress = moveInterpolator.transform(fraction)
-    val alphaProgress = alphaInterpolator.transform(fraction)
     val scaleProgress = scaleInterpolator.transform(fraction)
-    hearts.forEach { heart ->
-        heart.transX = lerp(0.5f, heart.targetTransX, moveProgress)
-        heart.transY = lerp(1f, heart.targetTransY, moveProgress)
-        heart.alpha = lerp(1f, 0f, alphaProgress)
-        heart.scale = lerp(1f, 0.6f, scaleProgress)
-    }
-
+    val context = LocalContext.current
     val drawable = rememberHeartDrawable()
     val drawableHalfWidth = drawable.intrinsicWidth / 2f
     val drawableHalfHeight = drawable.intrinsicHeight / 2f
 
-    Canvas(modifier = modifier.fillMaxSize()) {
+    Canvas(
+        modifier = Modifier.fillMaxSize(),
+    ) {
         val width = size.width
         val height = size.height
-        hearts.forEach { heart ->
-            val transX = lerp(drawableHalfWidth, width - drawableHalfWidth, heart.transX)
-            val transY = lerp(drawableHalfHeight, height - drawableHalfHeight, heart.transY)
-            translate(transX, transY) {
-                scale(scaleX = heart.scale, scaleY = heart.scale, pivot = Offset(0.5f, 0.5f)) {
+        hearts.forEach {
+            val x = lerp(width / 2, it.targetX * width, moveInterpolator.transform(fraction))
+            val y = lerp(height - drawableHalfHeight, it.targetY * height, moveInterpolator.transform(fraction))
+            translate(x, y) {
+                scale(
+                    scaleX = scaleInterpolator.transform(fraction),
+                    scaleY = scaleInterpolator.transform(fraction),
+                    pivot = Offset(0.5f, 0.5f),
+                ) {
                     drawIntoCanvas { canvas ->
-                        drawable.alpha = (255 * heart.alpha).toInt()
+                        drawable.alpha = lerp(0f, 255f, alphaInterpolator.transform(fraction)).toInt()
                         drawable.draw(canvas.nativeCanvas)
                     }
                 }
@@ -180,20 +163,15 @@ private fun rememberHeartDrawable(): Drawable {
     }
 }
 
-private fun lerp(from: Float, to: Float, progress: Float): Float {
-    return (1 - progress) * from + to * progress
-}
-
-private data class Heart(
-    var targetTransX: Float = lerp(0f, 1f, Random.nextFloat()),
-    var targetTransY: Float = lerp(0f, 2 / 3f, Random.nextFloat()),
-    var transX: Float = 0f,
-    var transY: Float = 0f,
-    var alpha: Float = 0f,
-    var scale: Float = 0f,
+data class Heart(
+    var targetX: Float = lerp(0f, 1f, Random.nextFloat()),
+    var targetY: Float = lerp(0f, 1f, Random.nextFloat()),
 ) {
     fun reset() {
-        targetTransX = lerp(0f, 1f, Random.nextFloat())
-        targetTransY = lerp(0f, 2 / 3f, Random.nextFloat())
+        targetX = lerp(0f, 1f, Random.nextFloat())
+        targetY = lerp(0f, 1f, Random.nextFloat())
     }
 }
+
+fun lerp(start: Float, stop: Float, fraction: Float) =
+    (start * (1 - fraction) + stop * fraction)

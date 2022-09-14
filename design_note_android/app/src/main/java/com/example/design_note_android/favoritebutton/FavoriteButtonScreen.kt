@@ -11,10 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
 import androidx.compose.material.IconToggleButton
 import androidx.compose.material.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -98,10 +95,18 @@ fun FavoriteAnimation(
         if (it.targetState) 1f else 0f
     }
 
-    val hearts = remember { List(10) { Heart() } }
-    hearts.forEach { heart ->
-        heart.reset()
+    // workaround: reduce drawing count and block ugly blink when other items are toggled.
+    if (visible.not() || animatedFraction >= 1f) {
+        return
     }
+
+    val hearts = remember { List(10) { Heart() } }
+    LaunchedEffect(targetChanged) {
+        if (targetChanged) {
+            hearts.forEach { heart -> heart.reset() }
+        }
+    }
+
     FavoriteAnimation(
         hearts = hearts,
         fraction = animatedFraction,
@@ -117,13 +122,7 @@ fun FavoriteAnimation(
     hearts: List<Heart>,
     fraction: Float,
 ) {
-    val moveProgress = moveInterpolator.transform(fraction)
-    val scaleProgress = scaleInterpolator.transform(fraction)
-    val context = LocalContext.current
     val drawable = rememberHeartDrawable()
-    val drawableHalfWidth = drawable.intrinsicWidth / 2f
-    val drawableHalfHeight = drawable.intrinsicHeight / 2f
-
     Canvas(
         modifier = Modifier.fillMaxSize(),
     ) {
@@ -131,11 +130,11 @@ fun FavoriteAnimation(
         val height = size.height
         hearts.forEach {
             val x = lerp(width / 2, it.targetX * width, moveInterpolator.transform(fraction))
-            val y = lerp(height - drawableHalfHeight, it.targetY * height, moveInterpolator.transform(fraction))
+            val y = lerp(height, it.targetY * height, moveInterpolator.transform(fraction))
             translate(x, y) {
                 scale(
-                    scaleX = scaleInterpolator.transform(fraction),
-                    scaleY = scaleInterpolator.transform(fraction),
+                    scaleX = lerp(1f, 0.6f, scaleInterpolator.transform(fraction)),
+                    scaleY = lerp(1f, 0.6f, scaleInterpolator.transform(fraction)),
                     pivot = Offset(0.5f, 0.5f),
                 ) {
                     drawIntoCanvas { canvas ->

@@ -12,7 +12,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   simple_animations: ^3.2.0
   transparent_image: ^2.0.0
-
+  sensors_plus: ^1.4.1
 
 dev_dependencies:
   flutter_test:

@@ -1,6 +1,5 @@
+import 'package:design_note/holograhic/holographic_page.dart';
 import 'package:flutter/material.dart';
-
-import 'airbnb/fadeLoading/airbnb_fade_loading_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +14,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: const AirbnbFadeLoadingPage(),
+        home: const HolographicPage(),
       );
 }
 

@@ -1,5 +1,6 @@
-import 'package:design_note/snow/snow_page.dart';
 import 'package:flutter/material.dart';
+
+import 'glass/glass_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,7 +15,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: const SnowPage(),
+        home: const GlassPage(),
       );
 }
 

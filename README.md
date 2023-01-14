@@ -10,7 +10,16 @@
 
 | holo | PayPay | Snow | glass | star |   
 | :----: | :----: | :----: | :----: | :----: |
-| <video src="https://user-images.githubusercontent.com/40765910/206907092-d01716a0-622f-4d7e-8904-dd09f99e188c.MP4"> | <video src="https://user-images.githubusercontent.com/40765910/208300476-409e4e96-5e4e-40b7-91d9-4c0b084f018f.mov"> | <video src="https://user-images.githubusercontent.com/40765910/209473720-d582e032-1e9a-4325-a68d-0309081d4597.mov"> | <video src="https://user-images.githubusercontent.com/40765910/209915332-75168941-704e-42b2-b6f7-2d3cfd2f03a8.mov"> | <video src="https://user-images.githubusercontent.com/40765910/210072272-d284d6de-4d32-4c51-b532-bb912fb27d0b.mov">
+| <video src="https://user-images.githubusercontent.com/40765910/206907092-d01716a0-622f-4d7e-8904-dd09f99e188c.MP4" width="100"> | <video src="https://user-images.githubusercontent.com/40765910/208300476-409e4e96-5e4e-40b7-91d9-4c0b084f018f.mov" width="100"> | <video src="https://user-images.githubusercontent.com/40765910/209473720-d582e032-1e9a-4325-a68d-0309081d4597.mov" width="100"> | <video src="https://user-images.githubusercontent.com/40765910/209915332-75168941-704e-42b2-b6f7-2d3cfd2f03a8.mov" width="100"> | <video src="https://user-images.githubusercontent.com/40765910/210072272-d284d6de-4d32-4c51-b532-bb912fb27d0b.mov" width="100">
+
+| holo |  |  |  |  |   
+| :----: | :----: | :----: | :----: | :----: |
+| <video src="https://user-images.githubusercontent.com/40765910/211200413-22daed61-1f73-41da-929a-f9d932e79b15.mov" width="100"> | <video src=""> | <video src=""> | <video src=""> | <video src="">
+
+
+
+
+
 
 
 

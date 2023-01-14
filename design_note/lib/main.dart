@@ -1,5 +1,6 @@
-import 'package:design_note/watch/watch_page.dart';
 import 'package:flutter/material.dart';
+
+import 'christmasTree/ChristmasTreePage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,7 +15,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: const WatchPage(),
+        home: const ChristmasTreePage(),
       );
 }
 

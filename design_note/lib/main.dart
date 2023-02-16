@@ -1,5 +1,6 @@
-import 'package:design_note/goodButton/good_button_page.dart';
 import 'package:flutter/material.dart';
+
+import 'list_progress/list_progress_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,7 +15,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: const GoodButtonPage(),
+        home: const ListProgressPage(),
       );
 }
 

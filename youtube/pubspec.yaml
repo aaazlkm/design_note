@@ -19,9 +19,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   dart_lint:
-    git:
-      url: git@github.com:aaazlkm/dart_lint.git
-      ref: v2.0.1
+    path: ../../dart_lint
 
 flutter:
   uses-material-design: true

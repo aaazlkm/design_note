@@ -9,6 +9,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.11.0"
+  barcode:
+    dependency: transitive
+    description:
+      name: barcode
+      sha256: "789f898eef0bd88312470bdb2cc996f895ad7dd5f89e9adde84b204546a90b45"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.4"
+  barcode_widget:
+    dependency: "direct main"
+    description:
+      name: barcode_widget
+      sha256: "6f2c5b08659b1a5f4d88d183e6007133ea2f96e50e7b8bb628f03266c3931427"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.4"
   boolean_selector:
     dependency: transitive
     description:
@@ -49,6 +65,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.5"
+  dart_lint:
+    dependency: "direct dev"
+    description:
+      path: "."
+      ref: "v2.0.1"
+      resolved-ref: "4039a9113eaa0b3701997559964b9d72336feb4f"
+      url: "git@github.com:aaazlkm/dart_lint.git"
+    source: git
+    version: "0.0.1"
   fake_async:
     dependency: transitive
     description:
@@ -62,16 +87,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_lints:
-    dependency: "direct dev"
-    description:
-      name: flutter_lints
-      sha256: aeb0b80a8b3709709c9cc496cdc027c5b3216796bc0af0ce1007eaf24464fd4c
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.1"
   flutter_test:
     dependency: "direct dev"
+    description: flutter
+    source: sdk
+    version: "0.0.0"
+  flutter_web_plugins:
+    dependency: transitive
     description: flutter
     source: sdk
     version: "0.0.0"
@@ -83,14 +105,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.7"
-  lints:
-    dependency: transitive
-    description:
-      name: lints
-      sha256: "0a217c6c989d21039f1498c3ed9f3ed71b354e69873f13a8dfc3c9fe76f1b452"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.1"
   matcher:
     dependency: transitive
     description:
@@ -123,6 +137,46 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.8.3"
+  plugin_platform_interface:
+    dependency: transitive
+    description:
+      name: plugin_platform_interface
+      sha256: "6a2128648c854906c53fa8e33986fc0247a1116122f9534dd20e3ab9e16a32bc"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.4"
+  qr:
+    dependency: transitive
+    description:
+      name: qr
+      sha256: "64957a3930367bf97cc211a5af99551d630f2f4625e38af10edd6b19131b64b3"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.1"
+  sensors_plus:
+    dependency: "direct main"
+    description:
+      name: sensors_plus
+      sha256: "10d3aa4071121d06351e9ba555cc25e83273314a3faab1cee12f9d886eff7426"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.2"
+  sensors_plus_platform_interface:
+    dependency: transitive
+    description:
+      name: sensors_plus_platform_interface
+      sha256: "95f0cc08791b8bf0c41c5fa99c84be2a7d5bf60a811ddc17e1438b1e68caf0d3"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.3"
+  simple_animations:
+    dependency: "direct main"
+    description:
+      name: simple_animations
+      sha256: "064b424fd8075af838b767ccf201133cb545e7686f1603e7ce265dcfcf7d5689"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.0.1"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -176,6 +230,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.5.1"
+  transparent_image:
+    dependency: "direct main"
+    description:
+      name: transparent_image
+      sha256: e8991d955a2094e197ca24c645efec2faf4285772a4746126ca12875e54ca02f
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.1"
   vector_math:
     dependency: transitive
     description:
@@ -185,4 +247,5 @@ packages:
     source: hosted
     version: "2.1.4"
 sdks:
-  dart: ">=3.0.3 <4.0.0"
+  dart: ">=3.0.0 <4.0.0"
+  flutter: ">=3.3.0"

@@ -57,11 +57,11 @@ class _CircleTransitionPageState extends State<_CircleTransitionPage> with Singl
   Widget build(BuildContext context) => SafeArea(
         child: Scaffold(
           body: AnimationDeveloperTools(
-            child: PlayAnimation<double>(
+            child: PlayAnimationBuilder<double>(
               tween: Tween<double>(begin: 0.0, end: 1),
               duration: const Duration(milliseconds: 1500),
               developerMode: true, // enable developer mode
-              builder: (context, child, value) => CustomPaint(
+              builder: (context, value, child) => CustomPaint(
                 size: Size.infinite,
                 painter: CircleTransitionPainter(
                   backgroundColor: pages[0].backgroundColor,
